@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const path = require('path');
 const cors = require('cors');
 const fs = require('fs');
@@ -293,44 +294,37 @@ app.delete('/api/category/:id', adminAuth, (req, res) => {
   }
 });
 
-// Create transporter with Gmail and Outlook fallback for Railway reliability
-let transporter;
+// Email service setup - Use Resend for reliable cloud delivery
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-try {
-  // Try Gmail first (simplified config)
-  transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    },
-    tls: {
-      rejectUnauthorized: false
-    }
-  });
-} catch (err) {
-  console.log('Gmail config failed, using fallback');
+// Helper function to send emails via Resend
+async function sendEmail(emailData) {
+  try {
+    const result = await resend.emails.send({
+      from: 'Shine Jewelry <noreply@resend.dev>', // Default Resend sender
+      to: emailData.to,
+      subject: emailData.subject,
+      text: emailData.text,
+      reply_to: emailData.replyTo || process.env.STORE_OWNER_EMAIL
+    });
+    console.log('Email sent successfully via Resend:', result);
+    return result;
+  } catch (error) {
+    console.error('Resend email error:', error);
+    throw error;
+  }
 }
 
-// Fallback: If you have outlook credentials
-if (!transporter && process.env.OUTLOOK_USER && process.env.OUTLOOK_PASS) {
-  transporter = nodemailer.createTransport({
-    service: 'Outlook365',
-    auth: {
-      user: process.env.OUTLOOK_USER,
-      pass: process.env.OUTLOOK_PASS
-    },
-    tls: {
-      rejectUnauthorized: false
-    }
-  });
-}
-
-// Email retry helper for Railway/Cloud reliability
+// Email retry helper for Railway/Cloud reliability using Resend
 async function sendEmailWithRetry(mailOptions, maxRetries = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      await transporter.sendMail(mailOptions);
+      await sendEmail({
+        to: mailOptions.to,
+        subject: mailOptions.subject,
+        text: mailOptions.text,
+        replyTo: mailOptions.replyTo
+      });
       console.log(`Email sent successfully on attempt ${attempt}`);
       return true;
     } catch (error) {
@@ -339,7 +333,7 @@ async function sendEmailWithRetry(mailOptions, maxRetries = 3) {
         throw error;
       }
       // Wait before retry (exponential backoff)
-      await new Promise(resolve => setTimeout(resolve, attempt * 2000));
+      await new Promise(resolve => setTimeout(resolve, attempt * 1000));
     }
   }
 }
