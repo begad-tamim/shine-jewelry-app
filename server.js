@@ -293,16 +293,47 @@ app.delete('/api/category/:id', adminAuth, (req, res) => {
   }
 });
 
-// Create transporter
+// Create transporter with Railway/Cloud optimizations for Gmail
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
+  service: 'gmail',
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: parseInt(process.env.SMTP_PORT || '587'),
   secure: process.env.SMTP_SECURE === 'true',
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS
-  }
+  },
+  tls: {
+    rejectUnauthorized: false,
+    ciphers: 'SSLv3'
+  },
+  connectionTimeout: 60000, // 60 seconds
+  greetingTimeout: 30000,   // 30 seconds
+  socketTimeout: 60000,     // 60 seconds
+  pool: true,
+  maxConnections: 1,
+  rateDelta: 20000,
+  rateLimit: 5,
+  debug: false
 });
+
+// Email retry helper for Railway/Cloud reliability
+async function sendEmailWithRetry(mailOptions, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log(`Email sent successfully on attempt ${attempt}`);
+      return true;
+    } catch (error) {
+      console.error(`Email attempt ${attempt} failed:`, error.message);
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      // Wait before retry (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, attempt * 2000));
+    }
+  }
+}
 
 // Health
 app.get('/api/ping', (req, res) => res.json({ ok: true }));
@@ -321,7 +352,7 @@ app.post('/api/contact', async (req, res) => {
       text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
     };
 
-    await transporter.sendMail(mailOptions);
+    await sendEmailWithRetry(mailOptions);
     return res.json({ ok: true, message: 'Message sent' });
   } catch (err) {
     console.error('Contact error', err);
@@ -489,8 +520,8 @@ app.post('/api/order', async (req, res) => {
 
     // COD
     if (paymentType === 'COD') {
-      await transporter.sendMail(ownerMail);
-      await transporter.sendMail(customerMail);
+      await sendEmailWithRetry(ownerMail);
+      await sendEmailWithRetry(customerMail);
       return res.json({ ok: true, message: 'Order placed and emails sent' });
     }
 
@@ -498,7 +529,7 @@ app.post('/api/order', async (req, res) => {
       if (!global.instapayPending) global.instapayPending = {};
       global.instapayPending[instapayConfirmId] = customerMail;
 
-      await transporter.sendMail(ownerMail);
+      await sendEmailWithRetry(ownerMail);
       return res.json({ ok: true, message: 'Order placed, owner must confirm payment' });
     }
 
@@ -518,7 +549,7 @@ app.get('/api/confirm-payment', async (req, res) => {
   if (confirm === 'true') {
     const mail = global.instapayPending[id];
     try {
-      await transporter.sendMail(mail);
+      await sendEmailWithRetry(mail);
       delete global.instapayPending[id];
       return res.send('<h2>Instapay payment confirmed!</h2><p>The customer will now receive their confirmation email.</p>');
     } catch (err) {
