@@ -293,29 +293,38 @@ app.delete('/api/category/:id', adminAuth, (req, res) => {
   }
 });
 
-// Create transporter with Railway/Cloud optimizations for Gmail
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: process.env.SMTP_SECURE === 'true',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  },
-  tls: {
-    rejectUnauthorized: false,
-    ciphers: 'SSLv3'
-  },
-  connectionTimeout: 60000, // 60 seconds
-  greetingTimeout: 30000,   // 30 seconds
-  socketTimeout: 60000,     // 60 seconds
-  pool: true,
-  maxConnections: 1,
-  rateDelta: 20000,
-  rateLimit: 5,
-  debug: false
-});
+// Create transporter with Gmail and Outlook fallback for Railway reliability
+let transporter;
+
+try {
+  // Try Gmail first (simplified config)
+  transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
+    },
+    tls: {
+      rejectUnauthorized: false
+    }
+  });
+} catch (err) {
+  console.log('Gmail config failed, using fallback');
+}
+
+// Fallback: If you have outlook credentials
+if (!transporter && process.env.OUTLOOK_USER && process.env.OUTLOOK_PASS) {
+  transporter = nodemailer.createTransport({
+    service: 'Outlook365',
+    auth: {
+      user: process.env.OUTLOOK_USER,
+      pass: process.env.OUTLOOK_PASS
+    },
+    tls: {
+      rejectUnauthorized: false
+    }
+  });
+}
 
 // Email retry helper for Railway/Cloud reliability
 async function sendEmailWithRetry(mailOptions, maxRetries = 3) {
