@@ -29,6 +29,12 @@
       "id": "watch",
       "name": "Watch",
       "description": ""
+    },
+    {
+      "id": "ring",
+      "name": "Ring",
+      "description": "",
+      "section": "stainless"
     }
   ],
   "products": [
@@ -81,6 +87,14 @@
         "uploads/misc/1759153358305_IMG_0070.jpeg"
       ],
       "desc": "أنيقة وبأقل سعر"
+    },
+    {
+      "id": "_1759418147955",
+      "title": "خاتم فرعوني",
+      "price": 800,
+      "category": "ring",
+      "images": [],
+      "desc": ""
     }
   ],
   "removedProducts": [],
