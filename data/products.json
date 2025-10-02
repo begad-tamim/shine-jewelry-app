@@ -1,0 +1,88 @@
+{
+  "categories": [
+    {
+      "id": "bracelets",
+      "name": "Bracelets",
+      "description": "Handpicked bracelet designs."
+    },
+    {
+      "id": "rings",
+      "name": "Rings",
+      "description": "Stylish rings collection."
+    },
+    {
+      "id": "earrings",
+      "name": "Earrings",
+      "description": "Elegant earrings."
+    },
+    {
+      "id": "necklaces",
+      "name": "Necklaces",
+      "description": "Pharohs Necklace designed to make you feel the vibes of our culture"
+    },
+    {
+      "id": "silver",
+      "name": "Silver",
+      "description": ""
+    },
+    {
+      "id": "watch",
+      "name": "Watch",
+      "description": ""
+    }
+  ],
+  "products": [
+    {
+      "id": "pharos_necklace_1759147926154",
+      "title": "Pharos Necklace",
+      "price": 800,
+      "category": "necklaces",
+      "images": [
+        "uploads/necklaces/1759147926110_Pharos_Necklace.jpg"
+      ],
+      "desc": "Special Handmade Necklace"
+    },
+    {
+      "id": "test_1759147959497",
+      "title": "test",
+      "price": 1000,
+      "category": "necklaces",
+      "images": [
+        "uploads/necklaces/1759147959494_Pharos_Necklace.jpg"
+      ],
+      "desc": ""
+    },
+    {
+      "id": "test_2_1759148003748",
+      "title": "test 2",
+      "price": 410,
+      "category": "necklaces",
+      "images": [
+        "uploads/misc/1759148037816_Pharos_Necklace_-_Copy.jpg"
+      ],
+      "desc": ""
+    },
+    {
+      "id": "ring_1759152903422",
+      "title": "Ring",
+      "price": 500,
+      "category": "silver",
+      "images": [
+        "uploads/silver/1759152901504_IMG_0083.jpeg"
+      ],
+      "desc": ""
+    },
+    {
+      "id": "_1759153250119",
+      "title": "كارتير",
+      "price": 890,
+      "category": "watch",
+      "images": [
+        "uploads/misc/1759153358305_IMG_0070.jpeg"
+      ],
+      "desc": "أنيقة وبأقل سعر"
+    }
+  ],
+  "removedProducts": [],
+  "removedCategories": []
+}

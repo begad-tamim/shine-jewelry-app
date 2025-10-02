@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shine Jewelry</title>
+  <link rel="icon" type="image/png" href="assets/Logo/shine-jewelry.png" />
+  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <div id="main-fade">
+  <header class="navbar">
+    <div class="logo" style="display:flex;align-items:center;">
+      <a href="https://www.instagram.com/rm_jewelry_co.10?igsh=MTZhcW13NjVzODU5cQ==" target="_blank" rel="noopener noreferrer" title="Visit our Instagram" class="logo-link" style="display:flex;align-items:center;">
+        <span class="logo-bg">
+          <img src="assets/Logo/logo.jpg" alt="Logo" class="logo-img" />
+        </span>
+      </a>
+    </div>
+    <nav class="nav-links nav-squares">
+  <a href="#home" class="nav-link nav-square">Home</a>
+  <a href="#shop" class="nav-link nav-square">Shop</a>
+  <a href="#about-contact" class="nav-link nav-square" id="about-contact-btn">About &amp; Contact</a>
+    </nav>
+    <div class="actions">
+      <button class="icon-btn" id="cart-btn" title="View cart">
+  <i class="fa fa-shopping-cart"></i><span id="cart-count">0</span>
+  <div id="fade-overlay" style="display:none;position:fixed;inset:0;background:rgba(255,255,255,0.8);z-index:9999;transition:opacity 0.5s;"></div>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Centered Carousel with Marketing Badges -->
+  <div id="main-carousel" class="carousel-marketing">
+    <div class="carousel-bg"></div>
+  <img id="loops-carousel-img" src="assets/Loops/loop.jpg" alt="Loops Image" class="carousel-img-marketing" />
+    <!-- Phone-only compact discount label -->
+    <div class="mobile-discount-chip">30% OFF · Today</div>
+  </div>
+
+    <!-- Shop -->
+    <section id="shop" class="shop">
+      <div class="container">
+        <div class="shop-top">
+          <h2 id="shop-title">All Products</h2>
+          <div class="filters">
+            <div id="filter-dropdown" class="filter-dropdown" aria-expanded="false">
+              <button class="filter-trigger" id="filter-trigger" type="button">All categories <span class="caret">▾</span></button>
+              <div class="filter-menu" id="filter-menu" hidden>
+                <!-- Built dynamically by app.js with sections collapsed -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="products" class="products-grid"></div>
+      </div>
+    </section>
+
+    <!-- About & Contact -->
+    <section id="about" class="info-section">
+      <div class="container grid-2">
+        <div class="card about-card">
+          <h3 class="about-title">About Shine Jewelry</h3>
+          <p id="about-desc"></p>
+          <ul class="features">
+            <li><i class="fa fa-award"></i> Handpicked quality</li>
+            <li><i class="fa fa-shipping-fast"></i> Fast shipping</li>
+            <li><i class="fa fa-star"></i> Satisfaction guaranteed</li>
+          </ul>
+        </div>
+
+        <div class="card contact-card" id="contact">
+          <h3 class="contact-title">Contact Us</h3>
+          <form id="contact-form">
+            <input id="cname" type="text" placeholder="Your name" required />
+            <input id="cemail" type="email" placeholder="Your email" required />
+            <textarea id="cmessage" placeholder="Your message" required></textarea>
+            <button type="submit" class="btn-primary">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Product Modal (centered, blurred background when active) -->
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <div class="modal-body">
+        <div class="gallery">
+          <button class="gallery-nav left" id="prev-img" aria-label="Previous image">&larr;</button>
+            <img id="modal-img" src="assets/Loops/loop.jpg" alt="Product image" />
+          <button class="gallery-nav right" id="next-img" aria-label="Next image">&rarr;</button>
+        </div>
+        <div class="modal-info">
+          <h3 id="modal-title"></h3>
+          <p class="price" id="modal-price"></p>
+          <p id="modal-desc"></p>
+          <div class="modal-actions">
+            <button id="modal-add" class="btn-primary">Add to cart</button>
+            <button id="modal-close-2" class="btn-ghost">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2025 Shine Jewelry — All rights reserved</p>
+    </div>
+  </footer>
+  </div>
+  <script>
+    // Animation removed, always keep wide
+  </script>
+
+  <script src="app.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

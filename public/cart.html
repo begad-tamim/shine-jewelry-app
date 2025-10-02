@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Your Cart - Shine Jewelry</title>
+  <link rel="icon" type="image/png" href="assets/Logo/shine-jewelry.png" />
+  <link rel="stylesheet" href="styles.css?v=2" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <div id="cart-fade" style="opacity:0;transform:scaleX(0.85);transition:opacity 0.35s, transform 0.35s;">
+  <header class="cart-header-bar">
+    <div class="logo" style="display:flex;align-items:center;">
+      <a href="https://www.instagram.com/rm_jewelry_co.10?igsh=MTZhcW13NjVzODU5cQ==" target="_blank" rel="noopener noreferrer" title="Visit our Instagram" class="logo-link" style="display:flex;align-items:center;">
+        <span class="logo-bg">
+          <img src="assets/Logo/logo.jpg" alt="Logo" class="logo-img" />
+        </span>
+      </a>
+    </div>
+    <nav class="nav-links">
+  <a href="index.html" class="nav-link nav-square">Home</a>
+  <a href="index.html#shop" class="nav-link nav-square">Shop</a>
+    </nav>
+    <div class="actions">
+  <span class="icon-btn"><i class="fa fa-shopping-cart"></i><span id="cart-count-top">0</span></span>
+    </div>
+  </header>
+
+  <main class="container cart-page">
+
+    <aside class="checkout-card">
+      <form id="order-form" class="checkout-form-center" novalidate>
+        <div class="field-group">
+          <label for="cust-name">Full Name<span aria-hidden="true" style="color:#c0392b;">*</span></label>
+          <input id="cust-name" name="fullName" type="text" placeholder="Full Name" autocomplete="name" required />
+        </div>
+        <div class="field-group">
+          <label for="cust-email">Email<span aria-hidden="true" style="color:#c0392b;">*</span></label>
+          <input id="cust-email" name="email" type="email" placeholder="Email" autocomplete="email" required />
+        </div>
+        <div class="field-group">
+          <label for="cust-phone">Phone<span aria-hidden="true" style="color:#c0392b;">*</span></label>
+          <input id="cust-phone" name="phone" type="tel" placeholder="Phone" autocomplete="tel" required />
+        </div>
+        <div class="field-group">
+          <label for="cust-address">Address<span aria-hidden="true" style="color:#c0392b;">*</span></label>
+          <input id="cust-address" name="address" type="text" placeholder="Street / Building / Apartment" autocomplete="street-address" required />
+        </div>
+        <div class="field-group">
+          <label for="cust-city">City<span aria-hidden="true" style="color:#c0392b;">*</span></label>
+          <input id="cust-city" name="city" type="text" placeholder="City" autocomplete="address-level2" required />
+        </div>
+        <div class="field-group">
+          <label for="cust-governorate">Governorate</label>
+          <input id="cust-governorate" name="governorate" type="text" placeholder="Governorate" autocomplete="address-level1" />
+        </div>
+  <div class="small" style="margin-top:8px;color:#7c4d00;font-size:0.8rem;">Fields marked with * are required.</div>
+      </form>
+      <div class="summary">
+        <div class="summary-left">
+          <div class="sum-row"><span>Subtotal:</span><strong id="subtotal">0 EGP</strong></div>
+          <div class="sum-row"><span>Shipping:</span><strong id="shipping">80 EGP</strong></div>
+          <div class="sum-row sum-total"><span>Total:</span><strong id="total">0 EGP</strong></div>
+        </div>
+        <div class="summary-right">
+          <button id="place-order-btn" class="btn-primary">Place Order</button>
+          <div id="modal-blur-overlay"></div>
+          <div id="order-modal" style="display:none;position:fixed;inset:0;z-index:10001;align-items:center;justify-content:center;">
+            <div style="background:#fffbe9;padding:32px 36px;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,0.18);max-width:340px;width:90%;text-align:center;">
+              <h2 style="margin-bottom:18px;color:#a97a2f;font-size:1.3rem;font-weight:700;">Choose Payment Method</h2>
+              <button id="pay-cash-btn" class="btn-primary pay-method-btn" style="width:100%;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:10px;">
+                <img src="assets/COD.png" alt="COD" class="pay-method-logo"> Cash on Delivery
+              </button>
+              <button id="pay-instapay-btn" class="btn-primary pay-method-btn instapay-btn" style="width:100%;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:10px;background:#e6b97a;">
+                <img src="assets/instapay.png" alt="Instapay" class="pay-method-logo"> Pay with Instapay
+              </button>
+              <button id="close-modal-btn" class="btn-ghost pay-method-btn" style="width:100%;margin-top:8px;">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+                                                                                                                                                                            <!-- <div class="small">A confirmation will be sent to your email.</div> -->
+      <!-- Confirmation overlay/modal -->
+      <!-- Instapay confirmation popup -->
+      <div id="instapay-confirm-popup" style="display:none;position:fixed;inset:0;z-index:15000;background:rgba(255,255,255,0.85);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+        <div style="background:#fffbe9;padding:32px 36px;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,0.18);max-width:340px;width:90%;text-align:center;display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:1.3rem;font-weight:700;color:#a97a2f;margin-bottom:18px;">Confirm Instapay Payment</div>
+          <div style="margin-bottom:18px;color:#7c4d00;">Please confirm that you have completed your Instapay payment.</div>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:1.1rem;color:#7c4d00;margin-bottom:18px;">
+            <input type="checkbox" id="instapay-paid-checkbox" style="width:22px;height:22px;">
+            I confirm I have paid using Instapay
+          </label>
+          <button id="instapay-confirm-btn" class="btn-primary pay-method-btn" style="width:100%;margin-top:8px;" disabled>Continue</button>
+        </div>
+      </div>
+      <div id="order-confirm-overlay" style="display:none;position:fixed;inset:0;z-index:20000;background:rgba(255,255,255,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+        <div style="background:#fffbe9;padding:38px 44px;border-radius:22px;box-shadow:0 16px 48px rgba(0,0,0,0.18);max-width:400px;width:90%;text-align:center;display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:3.2rem;color:#4bb543;margin-bottom:18px;"><i class="fa fa-check-circle"></i></div>
+          <div style="font-size:2rem;font-weight:800;color:#a97a2f;margin-bottom:18px;">Your order is confirmed</div>
+          <div id="confirm-phrase" style="font-size:1.25rem;color:#7c4d00;font-weight:600;min-height:32px;"></div>
+        </div>
+      </div>
+    </aside>
+
+    <div id="cart-list">
+      <div class="cart-title">Your Cart</div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2025 Shine Jewelry — All rights reserved</p>
+    </div>
+  </footer>
+  </div>
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        var el = document.getElementById('cart-fade');
+        el.style.opacity = 1;
+        el.style.transform = 'scaleX(1)';
+      }, 40);
+    });
+  </script>
+  <script src="app.js"></script>
+<script>
+// Show confirmation overlay after payment and animate phrase
+function showOrderConfirmation() {
+  var overlay = document.getElementById('order-confirm-overlay');
+  var phrase = "A confirmation will be sent to your email.";
+  var phraseEl = document.getElementById('confirm-phrase');
+  overlay.style.display = 'flex';
+  phraseEl.textContent = '';
+  let i = 0;
+  let timer = setInterval(function() {
+    phraseEl.textContent = phrase.slice(0, i);
+    i++;
+    if (i > phrase.length) {
+      clearInterval(timer);
+      // Reset cart after confirmation
+      localStorage.removeItem('sj_cart');
+      if (typeof updateCartCount === 'function') updateCartCount();
+      setTimeout(function() {
+        overlay.style.display = 'none';
+        window.location.href = 'index.html';
+      }, 1400);
+    }
+  }, 38);
+}
+
+// Instapay confirmation popup logic
+function showInstapayPopup() {
+  var popup = document.getElementById('instapay-confirm-popup');
+  var checkbox = document.getElementById('instapay-paid-checkbox');
+  var confirmBtn = document.getElementById('instapay-confirm-btn');
+  popup.style.display = 'flex';
+  checkbox.checked = false;
+  confirmBtn.disabled = true;
+  checkbox.addEventListener('change', function() {
+    confirmBtn.disabled = !checkbox.checked;
+  });
+  confirmBtn.addEventListener('click', function handler() {
+  popup.style.display = 'none';
+  confirmBtn.removeEventListener('click', handler);
+  // Trigger order logic (send owner email)
+  if (typeof window.sendInstapayOrder === 'function') window.sendInstapayOrder();
+  setTimeout(showOrderConfirmation, 300);
+  });
+}
+
+// Patch app.js payment logic to show confirmation overlay and popup
+document.addEventListener('DOMContentLoaded', function() {
+  var payCashBtn = document.getElementById('pay-cash-btn');
+  var payInstapayBtn = document.getElementById('pay-instapay-btn');
+  if (payCashBtn) {
+    payCashBtn.addEventListener('click', function() {
+      setTimeout(showOrderConfirmation, 300);
+    });
+  }
+  if (payInstapayBtn) {
+    payInstapayBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      showInstapayPopup();
+    });
+  }
+});
+</script>
+</body>
+</html>
