@@ -297,34 +297,22 @@ app.delete('/api/category/:id', adminAuth, (req, res) => {
 // Email service setup - Use Resend for reliable cloud delivery
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Helper function to send emails via Resend
-async function sendEmail(emailData) {
-  try {
-    const result = await resend.emails.send({
-      from: 'Shine Jewelry <noreply@resend.dev>', // Default Resend sender
-      to: emailData.to,
-      subject: emailData.subject,
-      text: emailData.text,
-      reply_to: emailData.replyTo || process.env.STORE_OWNER_EMAIL
-    });
-    console.log('Email sent successfully via Resend:', result);
-    return result;
-  } catch (error) {
-    console.error('Resend email error:', error);
-    throw error;
-  }
-}
+
 
 // Email retry helper for Railway/Cloud reliability using Resend
 async function sendEmailWithRetry(mailOptions, maxRetries = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      await sendEmail({
+      const result = await resend.emails.send({
+        from: 'Shine Jewelry <orders@resend.dev>',
         to: mailOptions.to,
         subject: mailOptions.subject,
         text: mailOptions.text,
-        replyTo: mailOptions.replyTo
+        html: `<pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${mailOptions.text}</pre>`,
+        reply_to: mailOptions.replyTo || process.env.STORE_OWNER_EMAIL
       });
+      
+      console.log('Email sent successfully via Resend:', result);
       console.log(`Email sent successfully on attempt ${attempt}`);
       return true;
     } catch (error) {
