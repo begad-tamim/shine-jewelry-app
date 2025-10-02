@@ -12,9 +12,10 @@ node_modules/
 .DS_Store
 Thumbs.db
 
-# Ignore uploads and assets
+# Ignore uploads (user-generated content)
 uploads/
-public/assets/
+
+# Note: Keep public/assets/ in repo for deployment
 
 # Ignore build output
 /dist/
