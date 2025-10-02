@@ -38,7 +38,16 @@
     }
   ],
   "products": [
-    
+    {
+      "id": "hh_1759446432107",
+      "title": "hh",
+      "price": 3000,
+      "category": "bracelets",
+      "images": [
+        "uploads/bracelets/1759446432100_Pharos_Necklace_-_Copy.jpg"
+      ],
+      "desc": ""
+    }
   ],
   "removedProducts": [],
   "removedCategories": []

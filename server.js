@@ -297,31 +297,67 @@ app.delete('/api/category/:id', adminAuth, (req, res) => {
 // Email service setup - Use Resend for reliable cloud delivery
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Gmail fallback transporter for customer emails
+const gmailTransporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  },
+  tls: {
+    rejectUnauthorized: false
+  }
+});
 
 
-// Email retry helper for Railway/Cloud reliability using Resend
+
+// Email retry helper - Use Gmail for customers, Resend for owner
 async function sendEmailWithRetry(mailOptions, maxRetries = 3) {
+  const isOwnerEmail = mailOptions.to === process.env.STORE_OWNER_EMAIL;
+  
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      const result = await resend.emails.send({
-        from: 'Shine Jewelry <orders@resend.dev>',
-        to: mailOptions.to,
-        subject: mailOptions.subject,
-        text: mailOptions.text,
-        html: `<pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${mailOptions.text}</pre>`,
-        reply_to: mailOptions.replyTo || process.env.STORE_OWNER_EMAIL
-      });
-      
-      console.log('Email sent successfully via Resend:', result);
-      console.log(`Email sent successfully on attempt ${attempt}`);
-      return true;
+      if (isOwnerEmail) {
+        // Use Resend for owner emails (more reliable for notifications)
+        const emailData = {
+          from: 'Shine Jewelry <onboarding@resend.dev>',
+          to: mailOptions.to,
+          subject: mailOptions.subject,
+          reply_to: mailOptions.replyTo || mailOptions.to
+        };
+
+        if (mailOptions.html) {
+          emailData.html = mailOptions.html;
+        } else if (mailOptions.text) {
+          emailData.text = mailOptions.text;
+          emailData.html = `<pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${mailOptions.text}</pre>`;
+        }
+
+        // No attachment handling needed - using web URLs
+
+        const result = await resend.emails.send(emailData);
+        if (result.error) {
+          throw new Error(`Resend API Error: ${result.error.message}`);
+        }
+        console.log('Owner email sent successfully via Resend');
+        return true;
+        
+      } else {
+        // Use Gmail SMTP for customer emails (works with all domains)
+        console.log(`Sending customer email to: ${mailOptions.to} via Gmail SMTP`);
+        
+        // Gmail SMTP can handle the full nodemailer format including attachments
+        await gmailTransporter.sendMail(mailOptions);
+        console.log('Customer email sent successfully via Gmail');
+        return true;
+      }
     } catch (error) {
       console.error(`Email attempt ${attempt} failed:`, error.message);
       if (attempt === maxRetries) {
         throw error;
       }
       // Wait before retry (exponential backoff)
-      await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+      await new Promise(resolve => setTimeout(resolve, attempt * 2000));
     }
   }
 }
@@ -365,7 +401,7 @@ app.post('/api/order', async (req, res) => {
 
     // Build table rows for items
     const itemsRows = items.map(i => {
-      const imgCell = i.img ? `<td style='padding:8px 12px;vertical-align:middle;'><img src='cid:${i.img}' alt='${esc(i.title)}' style='width:60px;height:60px;object-fit:contain;border-radius:8px;background:#fffbe9;border:1px solid #f1d9a6;'/></td>` : `<td style='padding:8px 12px;vertical-align:middle;'></td>`;
+      const imgCell = i.img ? `<td style='padding:8px 12px;vertical-align:middle;'><img src='https://shine-jewelry.up.railway.app/${i.img}' alt='${esc(i.title)}' style='width:60px;height:60px;object-fit:contain;border-radius:8px;background:#fffbe9;border:1px solid #f1d9a6;'/></td>` : `<td style='padding:8px 12px;vertical-align:middle;'></td>`;
       return `
         <tr style='background:#fff;'>
           ${imgCell}
@@ -399,7 +435,7 @@ app.post('/api/order', async (req, res) => {
     // Owner email
     let ownerHtml = `
       <div style='text-align:center;margin-bottom:18px;'>
-        <img src='cid:logoimg' alt='Logo' style='height:96px;width:auto;border-radius:24px;'>
+        <img src='https://shine-jewelry.up.railway.app/assets/Logo/shine-jewelry.png' alt='Shine Jewelry Logo' style='height:96px;width:auto;border-radius:24px;'>
       </div>
       <h2 style='color:#a97a2f;margin:0 0 6px;font-size:1.4rem;'>New Order Received</h2>
       <div style='font-size:0.9rem;color:#7c4d00;margin-bottom:14px;'>Order Reference: <strong>${orderRef}</strong></div>
@@ -445,22 +481,17 @@ app.post('/api/order', async (req, res) => {
 
     // Customer email
     const customerItemsHtmlRows = items.map((i, idx) => {
-      const cid = i.img ? `customer_${idx}_${i.img.replace(/[^a-zA-Z0-9]/g, '')}` : '';
-      const imgCell = i.img ? `<td style='padding:8px 12px;vertical-align:middle;'><img src='cid:${cid}' alt='${esc(i.title)}' style='width:60px;height:60px;object-fit:contain;border-radius:8px;background:#fffbe9;border:1px solid #f1d9a6;' onerror="this.style.display='none'"/></td>` : `<td style='padding:8px 12px;'></td>`;
+      const imgCell = i.img ? `<td style='padding:8px 12px;vertical-align:middle;'><img src='https://shine-jewelry.up.railway.app/${i.img}' alt='${esc(i.title)}' style='width:60px;height:60px;object-fit:contain;border-radius:8px;background:#fffbe9;border:1px solid #f1d9a6;' onerror="this.style.display='none'"/></td>` : `<td style='padding:8px 12px;'></td>`;
       return `<tr style='background:#fff;'>${imgCell}<td style='padding:8px 12px;font-weight:600;color:#7c4d00;'>${esc(i.title)}</td><td style='padding:8px 12px;text-align:center;color:#7c4d00;'>${i.qty}</td><td style='padding:8px 12px;text-align:right;color:#7c4d00;'>${i.price} EGP</td></tr>`;
     }).join('');
-    const customerAttachments = items.filter(i => i.img).map((i, idx) => ({
-      filename: i.img.split('/').pop(),
-      path: require('path').join(__dirname, 'public', i.img),
-      cid: `customer_${idx}_${i.img.replace(/[^a-zA-Z0-9]/g, '')}`
-    }));
+    // Using web URLs for images instead of attachments
     const customerMail = {
       from: `"Shine Jewelry" <${process.env.SMTP_USER}>`,
       to: customer.email,
       subject: `Order confirmation - Shine Jewelry`,
       html: `
         <div style='text-align:center;margin-bottom:18px;'>
-          <img src='cid:logoimg' alt='Logo' style='height:96px;width:auto;border-radius:24px;'>
+          <img src='https://shine-jewelry.up.railway.app/assets/Logo/shine-jewelry.png' alt='Shine Jewelry Logo' style='height:96px;width:auto;border-radius:24px;'>
         </div>
         <h2 style='color:#a97a2f;margin:0 0 6px;font-size:1.5rem;'>Order Confirmed</h2>
         <p style='font-size:0.95rem;color:#7c4d00;line-height:1.55;margin:0 0 14px;'>Hi ${esc(customer.name)},<br><br>
@@ -499,14 +530,7 @@ app.post('/api/order', async (req, res) => {
         Warm regards,<br>— Shine Jewelry Team</p>
         <div style='margin-top:10px;font-size:0.7rem;color:#b08844;text-align:center;'>This email was generated automatically. Please do not reply directly.</div>
       `,
-      attachments: [
-        ...customerAttachments,
-          {
-            filename: 'shine-jewelry.png',
-            path: require('path').join(__dirname, 'public', 'assets/Logo/shine-jewelry.png'),
-            cid: 'logoimg'
-          }
-      ]
+      // No attachments needed - using web URLs instead
     };
 
     // COD
@@ -540,10 +564,18 @@ app.get('/api/confirm-payment', async (req, res) => {
   if (confirm === 'true') {
     const mail = global.instapayPending[id];
     try {
-      await sendEmailWithRetry(mail);
+      // Convert the old mail format to Resend format
+      const resendMail = {
+        to: mail.to,
+        subject: mail.subject,
+        html: mail.html,
+        text: mail.text
+      };
+      await sendEmailWithRetry(resendMail);
       delete global.instapayPending[id];
       return res.send('<h2>Instapay payment confirmed!</h2><p>The customer will now receive their confirmation email.</p>');
     } catch (err) {
+      console.error('Instapay confirmation email error:', err);
       return res.status(500).send('Failed to send confirmation email');
     }
   }
