@@ -457,7 +457,7 @@ app.post('/api/order', async (req, res) => {
     let instapayConfirmId;
     if (paymentType === 'Instapay') {
       instapayConfirmId = Math.random().toString(36).substr(2, 12);
-      ownerHtml += `<div style='margin-top:24px;'><a href='${process.env.BASE_URL || 'http://localhost:' + PORT}/api/confirm-payment?id=${instapayConfirmId}&email=${encodeURIComponent(customer.email)}' style='background:#4bb543;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:700;'>Confirm Instapay Payment</a></div>`;
+      ownerHtml += `<div style='margin-top:24px;'><a href='https://shine-jewelry.up.railway.app/api/confirm-payment?id=${instapayConfirmId}&email=${encodeURIComponent(customer.email)}' style='background:#4bb543;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:700;'>Confirm Instapay Payment</a></div>`;
     }
 
     const ownerMail = {
