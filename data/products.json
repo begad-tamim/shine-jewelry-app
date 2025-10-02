@@ -1,5 +1,44 @@
 {
   "categories": [
+    {
+      "id": "bracelets",
+      "name": "Bracelets",
+      "description": "Handpicked bracelet designs."
+    },
+    {
+      "id": "rings",
+      "name": "Rings",
+      "description": "Stylish rings collection."
+    },
+    {
+      "id": "earrings",
+      "name": "Earrings",
+      "description": "Elegant earrings."
+    },
+    {
+      "id": "necklaces",
+      "name": "Necklaces",
+      "description": "Pharohs Necklace designed to make you feel the vibes of our culture"
+    },
+    {
+      "id": "silver",
+      "name": "Silver",
+      "description": ""
+    },
+    {
+      "id": "watch",
+      "name": "Watch",
+      "description": ""
+    },
+    {
+      "id": "ring",
+      "name": "Ring",
+      "description": "",
+      "section": "stainless"
+    }
+  ],
+  "products": [
+    
   ],
   "removedProducts": [],
   "removedCategories": []
