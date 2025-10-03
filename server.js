@@ -481,30 +481,34 @@ app.post('/api/order', async (req, res) => {
       customerEmailTemplate = `Dear ${customer.name},
 
 Order Confirmed! 🎉
+
 Total: ${total.toFixed(2)} EGP
 Payment: Instapay ✅
 
-Items: ${items.map(i => `${i.title} (${i.qty}x)`).join(', ')}
+Items: 
+${items.map(i => `• ${i.title} (${i.qty}x)`).join('\n')}
 
-Delivery in 3-4 days to: ${customer.city || 'N/A'}
+Delivery: 3-4 days to ${customer.city || 'N/A'}
 Phone: ${customer.phone || 'N/A'}
 
-We will contact you before the product is shipped.
+We will contact you before shipping.
 
 Thanks for choosing Shine Jewelry!`;
     } else if (paymentType === 'COD') {
       customerEmailTemplate = `Dear ${customer.name},
 
 Order Confirmed! 🎉
+
 Total: ${total.toFixed(2)} EGP
 Payment: Cash on Delivery 💰
 
-Items: ${items.map(i => `${i.title} (${i.qty}x)`).join(', ')}
+Items: 
+${items.map(i => `• ${i.title} (${i.qty}x)`).join('\n')}
 
-Delivery in 3-4 days to: ${customer.city || 'N/A'}
+Delivery: 3-4 days to ${customer.city || 'N/A'}
 Phone: ${customer.phone || 'N/A'}
 
-We will contact you before the product is shipped.
+We will contact you before shipping.
 
 Thanks for choosing Shine Jewelry!`;
     }
