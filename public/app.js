@@ -641,7 +641,7 @@ async function sendOrderEmail() {
       localStorage.removeItem('sj_cart');
       updateCartCount();
       showToast('Order placed! Check your email for confirmation.');
-      setTimeout(()=> location.href = 'index.html', 1200);
+      // setTimeout(()=> location.href = 'index.html', 1200); // Disabled - modal handles navigation
     } else {
       showToast('Failed to place order: ' + (data.error || 'Unknown'));
     }

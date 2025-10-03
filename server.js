@@ -317,15 +317,40 @@ async function sendEmailWithRetry(mailOptions, maxRetries = 3) {
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      // Use Resend for ALL emails (works perfectly on Railway)
+      // Use Resend with smart routing
       console.log(`Sending email to: ${mailOptions.to} via Resend`);
       
-      const emailData = {
-        from: 'Shine Jewelry <onboarding@resend.dev>',
-        to: mailOptions.to,
-        subject: mailOptions.subject,
-        reply_to: mailOptions.replyTo || mailOptions.to
-      };
+      let emailData;
+      if (isOwnerEmail) {
+        // Owner emails - send normally to verified address
+        emailData = {
+          from: 'Shine Jewelry <onboarding@resend.dev>',
+          to: mailOptions.to,
+          subject: mailOptions.subject,
+          reply_to: mailOptions.replyTo || mailOptions.to
+        };
+      } else {
+        // Customer emails - send to owner with customer details in body
+        const originalBody = mailOptions.html || mailOptions.text || '';
+        emailData = {
+          from: 'Shine Jewelry <onboarding@resend.dev>',
+          to: process.env.STORE_OWNER_EMAIL,
+          subject: `New Customer Order - Please Forward`,
+          reply_to: mailOptions.to,
+          html: `
+            <div style="background: #f0f8ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h3 style="color: #2c5aa0; margin: 0 0 10px 0;">📧 Customer Email to Forward</h3>
+              <p><strong>Send this confirmation to:</strong> <a href="mailto:${mailOptions.to}">${mailOptions.to}</a></p>
+              <p><strong>Original Subject:</strong> ${mailOptions.subject}</p>
+            </div>
+            ${originalBody}
+            <hr style="margin: 20px 0;">
+            <p style="font-size: 12px; color: #666;">
+              💡 <strong>Action Required:</strong> Please copy and forward the above email content to the customer at ${mailOptions.to}
+            </p>
+          `
+        };
+      }
 
       if (mailOptions.html) {
         emailData.html = mailOptions.html;
@@ -449,11 +474,54 @@ app.post('/api/order', async (req, res) => {
       ${summaryHtml}
       <div style='margin-top:18px;font-size:0.75rem;color:#9c6d16;'>Generated automatically • ${new Date().toLocaleString()}</div>`;
 
-    let instapayConfirmId;
+    // Create email template for customer confirmation based on payment method
+    let customerEmailTemplate;
+    
     if (paymentType === 'Instapay') {
-      instapayConfirmId = Math.random().toString(36).substr(2, 12);
-      ownerHtml += `<div style='margin-top:24px;'><a href='https://shine-jewelry.up.railway.app/api/confirm-payment?id=${instapayConfirmId}&email=${encodeURIComponent(customer.email)}' style='background:#4bb543;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:700;'>Confirm Instapay Payment</a></div>`;
+      customerEmailTemplate = `Dear ${customer.name},
+
+Order Confirmed! 🎉
+Total: ${total.toFixed(2)} EGP
+Payment: Instapay ✅
+
+Items: ${items.map(i => `${i.title} (${i.qty}x)`).join(', ')}
+
+Delivery in 3-4 days to: ${customer.city || 'N/A'}
+Phone: ${customer.phone || 'N/A'}
+
+We will contact you before the product is shipped.
+
+Thanks for choosing Shine Jewelry!`;
+    } else if (paymentType === 'COD') {
+      customerEmailTemplate = `Dear ${customer.name},
+
+Order Confirmed! 🎉
+Total: ${total.toFixed(2)} EGP
+Payment: Cash on Delivery 💰
+
+Items: ${items.map(i => `${i.title} (${i.qty}x)`).join(', ')}
+
+Delivery in 3-4 days to: ${customer.city || 'N/A'}
+Phone: ${customer.phone || 'N/A'}
+
+We will contact you before the product is shipped.
+
+Thanks for choosing Shine Jewelry!`;
     }
+
+    const templateLink = `mailto:${encodeURIComponent(customer.email)}?subject=${encodeURIComponent(`Order Confirmed - Shine Jewelry (Ref: ${orderRef})`)}&body=${encodeURIComponent(customerEmailTemplate)}`;
+    
+    // Add customer confirmation button for both payment methods
+    ownerHtml += `
+      <div style='margin-top:24px;'>
+        <a href='${templateLink}' 
+           style='background:#2c5aa0;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;font-size:1rem;'>
+           📧 Send Customer Confirmation
+        </a>
+      </div>
+      <div style='margin-top:12px;padding:12px;background:#f0f8ff;border-radius:8px;font-size:0.85rem;color:#2c5aa0;'>
+        💡 <strong>Click the button above</strong> to open a pre-written ${paymentType === 'Instapay' ? 'Instapay confirmation' : 'Cash on Delivery confirmation'} email template for ${customer.name}
+      </div>`;
 
     const ownerMail = {
       from: `"Order Notification" <${process.env.SMTP_USER}>`,
@@ -531,16 +599,15 @@ app.post('/api/order', async (req, res) => {
     // COD
     if (paymentType === 'COD') {
       await sendEmailWithRetry(ownerMail);
-      await sendEmailWithRetry(customerMail);
+      // TODO: Uncomment when customer email is ready
+      // await sendEmailWithRetry(customerMail);
       return res.json({ ok: true, message: 'Order placed and emails sent' });
     }
 
     if (paymentType === 'Instapay') {
-      if (!global.instapayPending) global.instapayPending = {};
-      global.instapayPending[instapayConfirmId] = customerMail;
-
+      // Send owner notification with email template link
       await sendEmailWithRetry(ownerMail);
-      return res.json({ ok: true, message: 'Order placed, owner must confirm payment' });
+      return res.json({ ok: true, message: 'Order placed, owner notified' });
     }
 
     return res.status(400).json({ error: 'Unknown payment type' });
@@ -566,9 +633,10 @@ app.get('/api/confirm-payment', async (req, res) => {
         html: mail.html,
         text: mail.text
       };
-      await sendEmailWithRetry(resendMail);
+      // TODO: Uncomment when customer email is ready
+      // await sendEmailWithRetry(resendMail);
       delete global.instapayPending[id];
-      return res.send('<h2>Instapay payment confirmed!</h2><p>The customer will now receive their confirmation email.</p>');
+      return res.send('<h2>Instapay payment confirmed!</h2><p>Payment confirmed - customer will be contacted directly.</p>');
     } catch (err) {
       console.error('Instapay confirmation email error:', err);
       return res.status(500).send('Failed to send confirmation email');

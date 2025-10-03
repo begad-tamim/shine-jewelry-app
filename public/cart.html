@@ -38,10 +38,6 @@
         <div class="field-group">
           <label for="cust-email">Email<span aria-hidden="true" style="color:#c0392b;">*</span></label>
           <input id="cust-email" name="email" type="email" placeholder="Email" autocomplete="email" required />
-          <div class="email-note">
-            <span class="gmail-tip"><strong>Pro Tip:</strong> Gmail users get instant confirmation emails!</span>
-            <span class="other-email">Don't have Gmail? No worries! Your order is still 100% confirmed & we'll keep you updated!😊</span>
-          </div>
         </div>
         <div class="field-group">
           <label for="cust-phone">Phone<span aria-hidden="true" style="color:#c0392b;">*</span></label>
@@ -99,10 +95,11 @@
         </div>
       </div>
       <div id="order-confirm-overlay" style="display:none;position:fixed;inset:0;z-index:20000;background:rgba(255,255,255,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
-        <div style="background:#fffbe9;padding:38px 44px;border-radius:22px;box-shadow:0 16px 48px rgba(0,0,0,0.18);max-width:400px;width:90%;text-align:center;display:flex;flex-direction:column;align-items:center;">
+        <div style="background:#fffbe9;padding:38px 44px;border-radius:22px;box-shadow:0 16px 48px rgba(0,0,0,0.18);max-width:450px;width:90%;text-align:center;display:flex;flex-direction:column;align-items:center;">
           <div style="font-size:3.2rem;color:#4bb543;margin-bottom:18px;"><i class="fa fa-check-circle"></i></div>
-          <div style="font-size:2rem;font-weight:800;color:#a97a2f;margin-bottom:18px;">Your order is confirmed</div>
-          <div id="confirm-phrase" style="font-size:1.25rem;color:#7c4d00;font-weight:600;min-height:32px;"></div>
+          <div style="font-size:2rem;font-weight:800;color:#a97a2f;margin-bottom:18px;">🎉 Order Confirmed!</div>
+          <div id="confirm-phrase" style="font-size:1.1rem;color:#7c4d00;font-weight:600;min-height:60px;line-height:1.4;margin-bottom:20px;"></div>
+          <button id="return-home-btn" onclick="window.location.href='index.html'" style="background:#a97a2f;color:white;border:none;padding:12px 24px;border-radius:8px;font-size:1.1rem;font-weight:600;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 12px rgba(169,122,47,0.3);" onmouseover="this.style.background='#8b6429'" onmouseout="this.style.background='#a97a2f'">Return to Home Page</button>
         </div>
       </div>
     </aside>
@@ -132,7 +129,7 @@
 // Show confirmation overlay after payment and animate phrase
 function showOrderConfirmation() {
   var overlay = document.getElementById('order-confirm-overlay');
-  var phrase = "A confirmation will be sent to your email.";
+  var phrase = "Thank you for your order! 📦 Your jewelry will be carefully prepared and shipped within 3-4 business days. We'll contact you soon with updates! ✨";
   var phraseEl = document.getElementById('confirm-phrase');
   overlay.style.display = 'flex';
   phraseEl.textContent = '';
@@ -142,15 +139,12 @@ function showOrderConfirmation() {
     i++;
     if (i > phrase.length) {
       clearInterval(timer);
-      // Reset cart after confirmation
+      // Reset cart after confirmation but don't auto-close
       localStorage.removeItem('sj_cart');
       if (typeof updateCartCount === 'function') updateCartCount();
-      setTimeout(function() {
-        overlay.style.display = 'none';
-        window.location.href = 'index.html';
-      }, 1400);
+      // Modal stays open until user clicks "Return to Home Page" button
     }
-  }, 38);
+  }, 45);
 }
 
 // Instapay confirmation popup logic
