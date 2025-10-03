@@ -311,46 +311,41 @@ const gmailTransporter = nodemailer.createTransport({
 
 
 
-// Email retry helper - Use Gmail for customers, Resend for owner
+// Email retry helper - Use ONLY Resend for all emails (Railway compatible)
 async function sendEmailWithRetry(mailOptions, maxRetries = 3) {
   const isOwnerEmail = mailOptions.to === process.env.STORE_OWNER_EMAIL;
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      if (isOwnerEmail) {
-        // Use Resend for owner emails (more reliable for notifications)
-        const emailData = {
-          from: 'Shine Jewelry <onboarding@resend.dev>',
-          to: mailOptions.to,
-          subject: mailOptions.subject,
-          reply_to: mailOptions.replyTo || mailOptions.to
-        };
+      // Use Resend for ALL emails (works perfectly on Railway)
+      console.log(`Sending email to: ${mailOptions.to} via Resend`);
+      
+      const emailData = {
+        from: 'Shine Jewelry <onboarding@resend.dev>',
+        to: mailOptions.to,
+        subject: mailOptions.subject,
+        reply_to: mailOptions.replyTo || mailOptions.to
+      };
 
-        if (mailOptions.html) {
-          emailData.html = mailOptions.html;
-        } else if (mailOptions.text) {
-          emailData.text = mailOptions.text;
-          emailData.html = `<pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${mailOptions.text}</pre>`;
-        }
-
-        // No attachment handling needed - using web URLs
-
-        const result = await resend.emails.send(emailData);
-        if (result.error) {
-          throw new Error(`Resend API Error: ${result.error.message}`);
-        }
-        console.log('Owner email sent successfully via Resend');
-        return true;
-        
-      } else {
-        // Use Gmail SMTP for customer emails (works with all domains)
-        console.log(`Sending customer email to: ${mailOptions.to} via Gmail SMTP`);
-        
-        // Gmail SMTP can handle the full nodemailer format including attachments
-        await gmailTransporter.sendMail(mailOptions);
-        console.log('Customer email sent successfully via Gmail');
-        return true;
+      if (mailOptions.html) {
+        emailData.html = mailOptions.html;
+      } else if (mailOptions.text) {
+        emailData.text = mailOptions.text;
+        emailData.html = `<pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${mailOptions.text}</pre>`;
       }
+
+      // Send via Resend API
+      const result = await resend.emails.send(emailData);
+      if (result.error) {
+        throw new Error(`Resend API Error: ${result.error.message}`);
+      }
+      
+      if (isOwnerEmail) {
+        console.log('Owner email sent successfully via Resend');
+      } else {
+        console.log('Customer email sent successfully via Resend');
+      }
+      return true;
     } catch (error) {
       console.error(`Email attempt ${attempt} failed:`, error.message);
       if (attempt === maxRetries) {

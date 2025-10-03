@@ -540,6 +540,30 @@ body {
 .checkout-card .field-group label { font-size:0.85rem; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; color:#7c4d00; }
 .checkout-card .field-group input { width:100% !important; }
 .checkout-card .field-row .field-group { max-width:none; }
+
+/* Email note styling */
+.email-note {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #fff9e6 0%, #f8f4e6 100%);
+  border: 1px solid #f1d9a6;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.gmail-tip {
+  display: block;
+  color: #2d7d2d;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.other-email {
+  display: block;
+  color: #6b5b00;
+  font-weight: 400;
+}
 .checkout-card button {
   min-width: 110px;
   font-size: 1rem;
