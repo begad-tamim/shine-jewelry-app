@@ -480,37 +480,53 @@ app.post('/api/order', async (req, res) => {
     if (paymentType === 'Instapay') {
       customerEmailTemplate = `Dear ${customer.name},
 
+
 Order Confirmed! 🎉
 
-Total: ${total.toFixed(2)} EGP
-Payment: Instapay ✅
 
-Items: 
-${items.map(i => `• ${i.title} (${i.qty}x)`).join('\n')}
+💰 Total: ${total.toFixed(2)} EGP
 
-Delivery: 3-4 days to ${customer.city || 'N/A'}
-Phone: ${customer.phone || 'N/A'}
+💳 Payment: Instapay ✅
 
-We will contact you before shipping.
 
-Thanks for choosing Shine Jewelry!`;
+📦 Items:
+${items.map(i => `   • ${i.title} (${i.qty}x)`).join('\n')}
+
+
+🚚 Delivery: 3-4 days to ${customer.city || 'N/A'}
+
+📞 Phone: ${customer.phone || 'N/A'}
+
+
+⏰ We will contact you before shipping.
+
+
+✨ Thanks for choosing Shine Jewelry!`;
     } else if (paymentType === 'COD') {
       customerEmailTemplate = `Dear ${customer.name},
 
+
 Order Confirmed! 🎉
 
-Total: ${total.toFixed(2)} EGP
-Payment: Cash on Delivery 💰
 
-Items: 
-${items.map(i => `• ${i.title} (${i.qty}x)`).join('\n')}
+💰 Total: ${total.toFixed(2)} EGP
 
-Delivery: 3-4 days to ${customer.city || 'N/A'}
-Phone: ${customer.phone || 'N/A'}
+💵 Payment: Cash on Delivery
 
-We will contact you before shipping.
 
-Thanks for choosing Shine Jewelry!`;
+📦 Items:
+${items.map(i => `   • ${i.title} (${i.qty}x)`).join('\n')}
+
+
+🚚 Delivery: 3-4 days to ${customer.city || 'N/A'}
+
+📞 Phone: ${customer.phone || 'N/A'}
+
+
+⏰ We will contact you before shipping.
+
+
+✨ Thanks for choosing Shine Jewelry!`;
     }
 
     const templateLink = `mailto:${encodeURIComponent(customer.email)}?subject=${encodeURIComponent(`Order Confirmed - Shine Jewelry (Ref: ${orderRef})`)}&body=${encodeURIComponent(customerEmailTemplate)}`;
