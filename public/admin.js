@@ -53,12 +53,38 @@
   `;
   document.head.appendChild(style);
 
-  function toast(msg, isErr){
+  function toast(msg, isErr, duration = 2800){
+    // Remove existing toasts if too many
+    const existing = document.querySelectorAll('.admin-toast');
+    if (existing.length > 2) {
+      existing.forEach((toast, index) => {
+        if (index < existing.length - 2) {
+          toast.remove();
+        }
+      });
+    }
+    
     const t = document.createElement('div');
     t.className = 'admin-toast' + (isErr ? ' admin-error' : '');
-    t.textContent = msg;
+    
+    // Add icon based on message type
+    const icon = isErr ? '⚠️' : '✅';
+    t.innerHTML = `<span style="margin-right:6px;">${icon}</span>${msg}`;
+    
     document.body.appendChild(t);
-    setTimeout(()=> t.remove(), 2800);
+    
+    // Slide in animation
+    t.style.transform = 'translateX(100%)';
+    t.style.transition = 'transform 0.3s ease';
+    setTimeout(() => {
+      t.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Auto remove
+    setTimeout(() => {
+      t.style.transform = 'translateX(100%)';
+      setTimeout(() => t.remove(), 300);
+    }, duration);
   }
 
   function buildOverlay(){
@@ -124,15 +150,19 @@
     } catch(e){ toast(e.message, true); return false; }
   }
 
-  async function addProduct(form){
+  async function addProductBackground(form){
     try {
       const fd = new FormData(form);
-      const r = await fetch('/api/add-product', { method:'POST', headers:{ 'Authorization': authHeader }, body: fd });
+      const r = await fetch('/api/add-product-background', { 
+        method:'POST', 
+        headers:{ 'Authorization': authHeader }, 
+        body: fd 
+      });
       const ct = r.headers.get('content-type') || '';
       const data = ct.includes('application/json') ? await r.json() : {};
       if (!r.ok) throw new Error(data.error || 'Error');
-      toast('Product added');
-      return data.product;
+      toast('Product queued for background processing');
+      return data;
     } catch(e){ toast(e.message, true); return null; }
   }
 
@@ -178,7 +208,8 @@
           <label>Description</label><textarea name='desc'></textarea>
           <label>Images</label><input name='images' type='file' accept='image/*' multiple />
           <div class='admin-images-preview' id='adm_img_preview'></div>
-          <button class='admin-btn' type='submit'>Add Product</button>
+
+          <button class='admin-btn' type='submit'>Add Product (Background)</button>
         </form>
       </div>
       <div class='admin-section'>
@@ -203,6 +234,7 @@
           <label>Images</label><input name='images' type='file' accept='image/*' multiple />
           <div class='admin-small'><label style='display:inline-flex;align-items:center;gap:6px;'><input type='checkbox' name='replaceImages' value='true'/> Replace existing images</label></div>
           <div class='admin-images-preview' id='adm_edit_preview'></div>
+
           <div style='display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;'>
             <button class='admin-btn' type='submit'>Save Changes</button>
             <button class='admin-btn' id='adm_del_prod_btn' type='button' style='background:#e53935;'>Delete Product</button>
@@ -250,7 +282,7 @@
       });
     }
 
-    // Product form
+    // Product form - Background processing
     const prodForm = container.querySelector('#adm_prod_form');
     const preview = container.querySelector('#adm_img_preview');
     prodForm.images.addEventListener('change', ()=>{
@@ -262,9 +294,11 @@
     });
     prodForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
-      const added = await addProduct(prodForm);
+      const added = await addProductBackground(prodForm);
       if (added){
-        prodForm.reset(); preview.innerHTML=''; loadPanel(container);
+        prodForm.reset(); 
+        preview.innerHTML=''; 
+        toast('Product will be processed in background and appear shortly on the main site');
       }
     });
 

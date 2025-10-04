@@ -158,6 +158,98 @@ app.post('/api/add-product', adminAuth, upload.array('images', 8), (req, res) =>
   }
 });
 
+// Background job queue for product processing
+const productQueue = [];
+let isProcessingQueue = false;
+
+// Background product processing function
+async function processProductQueue() {
+  if (isProcessingQueue || productQueue.length === 0) return;
+  
+  isProcessingQueue = true;
+  
+  while (productQueue.length > 0) {
+    const job = productQueue.shift();
+    
+    try {
+      console.log(`Processing background product: ${job.title}`);
+      
+      // Simulate some processing time (you can remove this)
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Load current data
+      const data = loadData();
+      
+      // Check if category still exists
+      const cat = data.categories.find(c => c.id === job.category);
+      if (!cat) {
+        console.error(`Category ${job.category} not found for product ${job.title}`);
+        continue;
+      }
+      
+      // Create the product
+      const product = { 
+        id: job.id, 
+        title: job.title, 
+        price: job.price, 
+        category: job.category, 
+        images: job.images, 
+        desc: job.desc || '' 
+      };
+      
+      // Add to products array
+      data.products.push(product);
+      saveData(data);
+      
+      console.log(`Background product added: ${job.title}`);
+      
+    } catch (error) {
+      console.error(`Failed to process background product ${job.title}:`, error);
+    }
+  }
+  
+  isProcessingQueue = false;
+}
+
+// Add product to background queue endpoint
+app.post('/api/add-product-background', adminAuth, upload.array('images', 8), (req, res) => {
+  try {
+    const { title, price, category, desc } = req.body;
+    if (!title || !price || !category) return res.status(400).json({ error: 'title, price, category required' });
+    
+    // Quick validation without loading data
+    const priceNum = parseFloat(price);
+    if (isNaN(priceNum) || priceNum < 0) return res.status(400).json({ error: 'Invalid price' });
+    
+    const files = (req.files || []).map(f => path.relative(path.join(__dirname, 'public'), f.path).replace(/\\/g,'/'));
+    const id = (title.toLowerCase().replace(/[^a-z0-9]+/g,'_').slice(0,40) + '_' + Date.now()).replace(/__+/g,'_');
+    
+    // Add to queue
+    productQueue.push({
+      id,
+      title,
+      price: priceNum,
+      category,
+      images: files,
+      desc: desc || ''
+    });
+    
+    // Start processing queue if not already running
+    setTimeout(processProductQueue, 100);
+    
+    return res.json({ 
+      ok: true, 
+      message: 'Product queued for background processing',
+      queuePosition: productQueue.length,
+      productId: id
+    });
+    
+  } catch (err) {
+    console.error('Add product background error', err);
+    return res.status(500).json({ error: 'Failed to queue product' });
+  }
+});
+
 // Helper to ensure a path is inside uploads root
 function isPathInsideUploads(p) {
   const full = path.resolve(p);
