@@ -167,9 +167,29 @@
   }
 
   function buildPanelHtml(cats, prods){
+  async function getCarouselImages() {
+    try {
+      const r = await fetch('/api/carousel-images');
+      if (!r.ok) return [];
+      const data = await r.json();
+      return data.images || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function buildPanelHtml(cats, prods, carouselImages){
     const silverCats = cats.filter(c=> (c.section||'silver') === 'silver');
     const stainlessCats = cats.filter(c=> (c.section||'silver') === 'stainless');
     return `
+      <div class='admin-section'>
+        <h4>Homepage Carousel</h4>
+        <form id='adm_carousel_form'>
+          <label>Images (replaces all existing)</label><input name='images' type='file' accept='image/*' multiple required />
+          <div class='admin-images-preview' id='adm_carousel_preview'>${carouselImages.map(src => `<img src='/${src}' />`).join('')}</div>
+          <button class='admin-btn' type='submit'>Update Carousel</button>
+        </form>
+      </div>
       <div class='admin-section'>
         <h4>Categories</h4>
         <div>
@@ -182,7 +202,7 @@
           <label>Section</label>
           <select name='section' required>
             <option value='silver'>Silver</option>
-            <option value='stainless'>Stainless Steel</option>
+            <option value='stainless'>Stainless</option>
           </select>
           <button class='admin-btn' type='submit'>Add Category</button>
         </form>
@@ -199,11 +219,13 @@
         <h4>Add Product</h4>
         <form id='adm_prod_form'>
           <label>Title</label><input name='title' required />
-          <label>Price</label><input name='price' type='number' step='0.01' min='0' required />
+          <label>Price</label>
+          <input name='price' type='number' step='0.01' min='0' placeholder='Product price (e.g., 300)' required />
+          <div class='admin-small' style='color:#666;'>💡 You can add offer pricing later using the edit feature</div>
           <label>Category</label>
           <select name='category' required>
             <optgroup label='Silver'>${silverCats.map(c=>`<option value='${c.id}'>${c.name || c.id}</option>`).join('')}</optgroup>
-            <optgroup label='Stainless Steel'>${stainlessCats.map(c=>`<option value='${c.id}'>${c.name || c.id}</option>`).join('')}</optgroup>
+            <optgroup label='Stainless'>${stainlessCats.map(c=>`<option value='${c.id}'>${c.name || c.id}</option>`).join('')}</optgroup>
           </select>
           <label>Description</label><textarea name='desc'></textarea>
           <label>Images</label><input name='images' type='file' accept='image/*' multiple />
@@ -219,7 +241,7 @@
             <label>Category</label>
             <select id='adm_m_cat'>
               <optgroup label='Silver'>${silverCats.map(c=>`<option value='${c.id}'>${c.name || c.id}</option>`).join('')}</optgroup>
-              <optgroup label='Stainless Steel'>${stainlessCats.map(c=>`<option value='${c.id}'>${c.name || c.id}</option>`).join('')}</optgroup>
+              <optgroup label='Stainless'>${stainlessCats.map(c=>`<option value='${c.id}'>${c.name || c.id}</option>`).join('')}</optgroup>
             </select>
           </div>
           <div>
@@ -229,7 +251,30 @@
         </div>
         <form id='adm_edit_form' style='margin-top:8px;'>
           <label>Title</label><input name='title' />
-          <label>Price</label><input name='price' type='number' step='0.01' min='0' />
+          <div class='admin-pricing-section'>
+            <label>Pricing Options</label>
+            <div class='admin-small' style='margin-bottom:10px;color:#666;'>Use either regular price OR offer pricing (old + new price)</div>
+            
+            <div style='margin-bottom:15px;'>
+              <label>Regular Price</label>
+              <input name='price' type='number' step='0.01' min='0' placeholder='Regular price' />
+            </div>
+            
+            <div class='admin-offer-section'>
+              <label>OR Offer Pricing</label>
+              <div style='display:grid;grid-template-columns:1fr 1fr;gap:10px;'>
+                <div>
+                  <label style='font-size:0.9rem;color:#666;'>Old Price</label>
+                  <input name='oldPrice' type='number' step='0.01' min='0' placeholder='Original price' />
+                </div>
+                <div>
+                  <label style='font-size:0.9rem;color:#666;'>New Price</label>
+                  <input name='offerPrice' type='number' step='0.01' min='0' placeholder='Offer price' />
+                </div>
+              </div>
+              <div class='admin-small' style='color:#e53935;'>💡 Fill both offer fields to create offer pricing</div>
+            </div>
+          </div>
           <label>Description</label><textarea name='desc'></textarea>
           <label>Images</label><input name='images' type='file' accept='image/*' multiple />
           <div class='admin-small'><label style='display:inline-flex;align-items:center;gap:6px;'><input type='checkbox' name='replaceImages' value='true'/> Replace existing images</label></div>
@@ -249,8 +294,31 @@
 
   async function loadPanel(container){
     const data = await apiGetProducts();
+    const carouselImages = await getCarouselImages();
     const cats = data.categories || []; const prods = data.products || [];
     container.innerHTML = buildPanelHtml(cats, prods);
+    container.innerHTML = buildPanelHtml(cats, prods, carouselImages);
+
+    // Carousel form
+    const carouselForm = container.querySelector('#adm_carousel_form');
+    const carouselPreview = container.querySelector('#adm_carousel_preview');
+    carouselForm.images.addEventListener('change', () => {
+      carouselPreview.innerHTML = '';
+      Array.from(carouselForm.images.files).forEach(f => {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(f);
+        carouselPreview.appendChild(img);
+      });
+    });
+    carouselForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(carouselForm);
+      const r = await fetch('/api/carousel-images', { method: 'POST', headers: { 'Authorization': authHeader }, body: fd });
+      const d = await r.json();
+      if (!r.ok) return toast(d.error || 'Upload failed', true);
+      toast('Carousel updated!');
+      loadPanel(container); // Reload to show new images from server
+    });
 
     // Category form
     const catForm = container.querySelector('#adm_cat_form');
@@ -294,6 +362,15 @@
     });
     prodForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
+      
+      // Validate that price is provided
+      const regularPrice = prodForm.price.value.trim();
+      
+      if (!regularPrice) {
+        toast('Please provide a price for the product', true);
+        return;
+      }
+      
       const added = await addProductBackground(prodForm);
       if (added){
         prodForm.reset(); 
@@ -319,6 +396,8 @@
       if (!prod){ mProd.innerHTML=''; return; }
       editForm.title.value = prod.title || '';
       editForm.price.value = (typeof prod.price === 'number') ? prod.price : '';
+      editForm.oldPrice.value = (typeof prod.oldPrice === 'number') ? prod.oldPrice : '';
+      editForm.offerPrice.value = (typeof prod.offerPrice === 'number') ? prod.offerPrice : '';
       editForm.desc.value = prod.desc || '';
       (prod.images||[]).forEach(src=>{
         const img = document.createElement('img'); img.src = src; editPreview.appendChild(img);
@@ -344,10 +423,32 @@
     editForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
       const id = mProd.value; if (!id) return;
+      
+      // Validate pricing when updating
+      const regularPrice = editForm.price.value.trim();
+      const oldPrice = editForm.oldPrice.value.trim();
+      const offerPrice = editForm.offerPrice.value.trim();
+      
+      const hasRegularPrice = regularPrice !== '';
+      const hasOfferPrices = oldPrice !== '' && offerPrice !== '';
+      
+      // Allow clearing all prices (will use existing product price)
+      if (hasRegularPrice && hasOfferPrices) {
+        toast('Please use either regular price OR offer pricing, not both', true);
+        return;
+      }
+      
+      if ((oldPrice !== '' && offerPrice === '') || (oldPrice === '' && offerPrice !== '')) {
+        toast('For offer pricing, please fill both old price and new price', true);
+        return;
+      }
+      
       try {
         const fd = new FormData();
         if (editForm.title.value.trim()) fd.append('title', editForm.title.value.trim());
         if (editForm.price.value !== '') fd.append('price', editForm.price.value);
+        if (editForm.oldPrice.value !== '') fd.append('oldPrice', editForm.oldPrice.value);
+        if (editForm.offerPrice.value !== '') fd.append('offerPrice', editForm.offerPrice.value);
         fd.append('desc', editForm.desc.value || '');
         if (editForm.replaceImages.checked) fd.append('replaceImages', 'true');
         Array.from(editForm.images.files).forEach(f=> fd.append('images', f));

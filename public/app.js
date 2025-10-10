@@ -204,12 +204,9 @@ async function loadDynamicProducts() {
     STATIC_PRODUCTS.forEach(p => map.set(p.id, p));
     (data.products || []).forEach(p => map.set(p.id, p));
     PRODUCTS = Array.from(map.values());
-    // Populate legacy select with sections and categories
+    // Store categories for rendering
     window.SJ_CATEGORIES = Array.isArray(data.categories) ? data.categories.slice() : [];
-    // Build custom dropdown with collapsible sections
-    const dd = document.getElementById('filter-dropdown');
-    if (dd) buildCollapsibleFilter(dd, window.SJ_CATEGORIES);
-    renderProducts('all');
+    renderCategories();
   } catch (e) {
     console.warn('Dynamic products load failed', e);
   }
@@ -231,48 +228,79 @@ function updateCartCount(){
 }
 
 
-// --- Render products ---
-function renderProducts(filter = 'all') {
-  const container = document.getElementById('products');
+// --- Render categories as clickable cards ---
+function renderCategories() {
+  const container = document.getElementById('categories');
   if (!container) return;
   container.innerHTML = '';
-  let list = PRODUCTS.slice();
-  if (filter !== 'all') list = list.filter(p => p.category === filter);
 
-  // Show friendly placeholder when no products
-  if (!list.length) {
+  if (!window.SJ_CATEGORIES || !window.SJ_CATEGORIES.length) {
     const empty = document.createElement('div');
     empty.className = 'empty-products-card';
     empty.innerHTML = `
       <div class="empty-products-inner">
-        <div class="empty-icon">🛍️</div>
-        <div class="empty-title">No products yet</div>
+        <div class="empty-icon">�</div>
+        <div class="empty-title">No categories yet</div>
         <div class="empty-sub">Please check back soon.</div>
       </div>`;
     container.appendChild(empty);
     return;
   }
 
-  // Vertically scrollable grid, show all products
-  list.forEach(p => {
+  // Create category cards
+  window.SJ_CATEGORIES.forEach(cat => {
+    // Get first product image from this category
+    const categoryProducts = PRODUCTS.filter(p => p.category === cat.id);
+    let coverImage = 'assets/Loops/loop.jpg'; // Default
+    if (categoryProducts.length > 0 && categoryProducts[0].images && categoryProducts[0].images[0]) {
+      const img = categoryProducts[0].images[0];
+      coverImage = img.startsWith('/') ? img : `/${img}`;
+    }
+    
+    const productCount = categoryProducts.length;
+    const categoryName = cat.name || capitalize(cat.id);
+    
     const card = document.createElement('article');
-    card.className = 'card';
-    const cover = (p.images && p.images[0]) ? p.images[0] : 'assets/Loops/loop.jpg';
+    card.className = 'category-card';
+    
+    // Determine material type based on category section
+    let materialBadge = '';
+    let materialType = '';
+    let materialIcon = '';
+    
+    if (cat.section === 'silver' || cat.id === 'silver') {
+      materialType = 'Silver';
+      materialBadge = `<div class="category-material-badge silver-badge">${materialType}</div>`;
+    } else if (cat.section === 'stainless' || cat.id === 'ring' || cat.id === 'watch') {
+      materialType = 'Stainless';
+      materialBadge = `<div class="category-material-badge steel-badge">${materialType}</div>`;
+    }
+    
+    console.log('Category:', cat.id, 'Section:', cat.section, 'Badge:', materialBadge ? 'YES' : 'NO');
+    
     card.innerHTML = `
-      <img src="${cover}" alt="${escapeHtml(p.title)}" loading="lazy" />
+      <div class="category-image-container">
+        <img src="${coverImage}" alt="${escapeHtml(categoryName)}" loading="lazy" />
+        ${materialBadge}
+      </div>
       <div class="card-body">
-        <div class="card-title">${escapeHtml(p.title)}</div>
+        <div class="card-title">${escapeHtml(categoryName)}</div>
         <div class="card-meta">
-          <div class="price">${p.price} EGP</div>
+          <div class="product-count">
+            <i class="fa fa-gem"></i>
+            ${productCount} item${productCount !== 1 ? 's' : ''}
+          </div>
+          <div class="shop-now">Shop Now <i class="fa fa-arrow-right"></i></div>
         </div>
       </div>
     `;
-    card.addEventListener('click', (e) => {
-      openProductModal(p.id);
+    
+    card.addEventListener('click', () => {
+      window.location.href = `/category/${cat.id}`;
     });
+    
     container.appendChild(card);
   });
-
 }
 
 // --- open modal with gallery ---
@@ -289,7 +317,16 @@ function openProductModal(productId) {
   document.getElementById('modal-img').src = modalImages[0] || 'assets/Loops/loop.jpg';
   document.getElementById('modal-title').textContent = product.title;
   document.getElementById('modal-price').textContent = `${product.price} EGP`;
-  document.getElementById('modal-desc').textContent = product.desc;
+  
+  // Only show description if it exists and is not empty
+  const descElement = document.getElementById('modal-desc');
+  if (product.desc && product.desc.trim()) {
+    descElement.textContent = product.desc;
+    descElement.style.display = 'block';
+  } else {
+    descElement.style.display = 'none';
+  }
+  
   document.getElementById('overlay').classList.add('active');
   document.body.style.overflow = 'hidden';
 }
@@ -328,18 +365,26 @@ function addActiveToCart(){
 function renderCartPageIfNeeded(){
   const cartList = document.getElementById('cart-list');
   if (!cartList) return;
+  
   const cart = getCart();
-  console.log('Cart contents:', cart);
-  cartList.innerHTML = '';
-    if (cart.length === 0){
-      cartList.innerHTML = `<div class="cart-empty-message">
-        <span style="font-size:1.15rem;font-weight:600;color:#a97a2f;">🛒 Your cart is empty!</span><br>
-  <span class="cart-empty-phrase" style="color:#3a2c13;font-size:1.05rem;font-weight:700;">Looks like you haven't added <span style="white-space:nowrap">anything yet.</span></span><br>
-        <a href="index.html#shop" class="browse-products-btn" style="margin-top:10px;">Browse products</a>
-      </div>`;
+  
+  // Clear existing cart items but preserve title
+  const existingItems = cartList.querySelectorAll('.cart-item, .cart-empty-message');
+  existingItems.forEach(item => item.remove());
+  
+  if (cart.length === 0){
+    const emptyMsg = document.createElement('div');
+    emptyMsg.className = 'cart-empty-message';
+    emptyMsg.innerHTML = `
+      <span style="font-size:1.15rem;font-weight:600;color:#a97a2f;">🛒 Your cart is empty!</span><br>
+      <span class="cart-empty-phrase" style="color:#3a2c13;font-size:1.05rem;font-weight:700;">Looks like you haven't added <span style="white-space:nowrap">anything yet.</span></span><br>
+      <a href="index.html#shop" class="browse-products-btn" style="margin-top:10px;">Browse products</a>
+    `;
+    cartList.appendChild(emptyMsg);
     updateTotals();
     return;
   }
+  
   cart.forEach((item, idx) => {
     const el = document.createElement('div');
     el.className = 'cart-item';
@@ -357,6 +402,9 @@ function renderCartPageIfNeeded(){
     `;
     cartList.appendChild(el);
   });
+
+  // Update totals after rendering items
+  updateTotals();
 
   // attach handlers
   cartList.querySelectorAll('.inc').forEach(b=>b.addEventListener('click', (e)=>{
@@ -721,128 +769,40 @@ window.sendInstapayOrder = function() { sendOrderEmail('Instapay'); };
   });
 });
 
-// ---- Select-based filter helpers ----
+// ---- Helper functions ----
 function capitalize(s){ return (s && s.length) ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
-function populateFilterSelect(sel, categories){
-  // Clear and add base option
-  sel.innerHTML = '';
-  const all = document.createElement('option'); all.value = 'all'; all.textContent = 'All categories'; sel.appendChild(all);
-  // Normalize sections
-  const cats = categories.map(c=>({ id: c.id, name: c.name || capitalize(c.id), section: (c.section==='stainless'||c.section==='silver')?c.section:'silver' }));
-  const silver = cats.filter(c=>c.section==='silver');
-  const steel = cats.filter(c=>c.section==='stainless');
-  const ogSilver = document.createElement('optgroup'); ogSilver.label = 'Silver';
-  silver.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.name; ogSilver.appendChild(o); });
-  sel.appendChild(ogSilver);
-  const ogSteel = document.createElement('optgroup'); ogSteel.label = 'Stainless Steel';
-  steel.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.name; ogSteel.appendChild(o); });
-  sel.appendChild(ogSteel);
-}
-// Title update is managed directly in dropdown selection
 
-// Build a custom collapsible dropdown with bold section headers
-function buildCollapsibleFilter(container, categories){
-  const trigger = container.querySelector('#filter-trigger');
-  const menu = container.querySelector('#filter-menu');
-  const cats = categories.map(c=>({ id:c.id, name:c.name||capitalize(c.id), section:(c.section==='stainless'||c.section==='silver')?c.section:'silver' }));
-  const silver = cats.filter(c=>c.section==='silver');
-  const steel = cats.filter(c=>c.section==='stainless');
-  let currentVal = 'all';
-
-  function item(label, value, isHeader=false){
-    const div = document.createElement('div');
-    div.className = isHeader ? 'filter-section' : 'filter-item';
-    div.setAttribute('role', isHeader ? 'button' : 'menuitem');
-    if (!isHeader) div.dataset.value = value;
-    if (isHeader) {
-      const txt = document.createElement('span'); txt.textContent = label; txt.className = 'filter-section-title';
-      const arrow = document.createElement('span'); arrow.className = 'filter-arrow'; arrow.textContent = '▸';
-      div.appendChild(txt); div.appendChild(arrow);
-    } else {
-      div.textContent = label;
-    }
-    return div;
+// --- Load data from API ---
+async function loadData() {
+  try {
+    const resp = await fetch('/api/products');
+    if (!resp.ok) throw new Error('Failed to load');
+    const data = await resp.json();
+    if (!data || !data.ok) return;
+    
+    // Merge: Avoid ID collisions (if collision, keep dynamic overwriting static)
+    const map = new Map();
+    STATIC_PRODUCTS.forEach(p => map.set(p.id, p));
+    (data.products || []).forEach(p => map.set(p.id, p));
+    PRODUCTS = Array.from(map.values());
+    
+    // Store categories for rendering
+    window.SJ_CATEGORIES = Array.isArray(data.categories) ? data.categories.slice() : [];
+    renderCategories();
+  } catch (e) {
+    console.warn('Dynamic products load failed', e);
   }
-
-  menu.innerHTML = '';
-  // All categories
-  const itAll = document.createElement('div');
-  itAll.className = 'filter-item filter-all'; itAll.dataset.value = 'all'; itAll.textContent = 'All categories';
-  menu.appendChild(itAll);
-
-  // Silver block
-  const headSilver = item('Silver', '', true);
-  const listSilver = document.createElement('div'); listSilver.className = 'filter-sublist'; listSilver.hidden = true;
-  silver.forEach(c=> listSilver.appendChild(item(c.name, c.id)));
-  menu.appendChild(headSilver); menu.appendChild(listSilver);
-
-  // Stainless block
-  const headSteel = item('Stainless Steel', '', true);
-  const listSteel = document.createElement('div'); listSteel.className = 'filter-sublist'; listSteel.hidden = true;
-  steel.forEach(c=> listSteel.appendChild(item(c.name, c.id)));
-  menu.appendChild(headSteel); menu.appendChild(listSteel);
-
-  // Toggle menu open/close
-  trigger.addEventListener('click', ()=>{
-    const open = menu.hasAttribute('hidden') ? false : true;
-    if (open) { menu.setAttribute('hidden',''); container.setAttribute('aria-expanded','false'); }
-    else { menu.removeAttribute('hidden'); container.setAttribute('aria-expanded','true'); updateActiveHighlight(); }
-  });
-  document.addEventListener('click', (e)=>{
-    if (!container.contains(e.target)) { menu.setAttribute('hidden',''); container.setAttribute('aria-expanded','false'); }
-  });
-
-  // Section header toggles
-  headSilver.addEventListener('click', ()=>{ listSilver.hidden = !listSilver.hidden; headSilver.querySelector('.filter-arrow').classList.toggle('open', !listSilver.hidden); });
-  headSteel.addEventListener('click', ()=>{ listSteel.hidden = !listSteel.hidden; headSteel.querySelector('.filter-arrow').classList.toggle('open', !listSteel.hidden); });
-
-  // Selection handler
-  function selectValue(val, label){
-    currentVal = val;
-    // If option doesn’t exist yet, fall back to rendering with val
-    renderProducts(val);
-    const title = document.getElementById('shop-title');
-    if (title) title.textContent = (val==='all') ? 'All Products' : label;
-    trigger.firstChild.nodeValue = label + ' ';
-    updateActiveHighlight();
-    menu.setAttribute('hidden',''); container.setAttribute('aria-expanded','false');
-  }
-  itAll.addEventListener('click', ()=> selectValue('all','All categories'));
-  listSilver.querySelectorAll('.filter-item').forEach(di=>{
-    di.addEventListener('click', ()=> selectValue(di.dataset.value, di.textContent));
-  });
-  listSteel.querySelectorAll('.filter-item').forEach(di=>{
-    di.addEventListener('click', ()=> selectValue(di.dataset.value, di.textContent));
-  });
-
-  // Initialize label
-  trigger.firstChild.nodeValue = 'All categories ';
-
-  // Highlight management and auto-expand
-  function updateActiveHighlight(){
-    // Clear active
-    menu.querySelectorAll('.filter-item').forEach(it=> it.classList.remove('active'));
-    // Highlight selected
-    const target = menu.querySelector(`.filter-item[data-value="${CSS.escape(currentVal)}"]`);
-    if (target) target.classList.add('active');
-    else menu.querySelector('.filter-all')?.classList.add('active');
-    // Expand containing section
-    const isSilver = silver.some(c=> c.id === currentVal);
-    const isSteel = steel.some(c=> c.id === currentVal);
-    if (isSilver) { listSilver.hidden = false; headSilver.querySelector('.filter-arrow').classList.add('open'); }
-    if (isSteel) { listSteel.hidden = false; headSteel.querySelector('.filter-arrow').classList.add('open'); }
-  }
-  // initial state
-  updateActiveHighlight();
 }
 
-// Expose a helper to select from outside (e.g., hero pills)
-window.SJ_selectFilter = function(val){
-  const item = document.querySelector(`#filter-menu .filter-item[data-value="${CSS.escape(val)}"]`);
-  if (item) { item.click(); return; }
-  if (val === 'all') { document.querySelector('#filter-menu .filter-all')?.click(); return; }
-  // Fallback: render and update labels
-  renderProducts(val);
-  const title = document.getElementById('shop-title'); if (title) title.textContent = capitalize(val);
-  const trig = document.getElementById('filter-trigger'); if (trig) trig.firstChild.nodeValue = capitalize(val) + ' ';
-};
+function escapeHtml(text) {
+  if (typeof text !== 'string') return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', () => {
+  updateCartCount();
+  loadData();
+});

@@ -1,11 +1,12 @@
-<!doctype html>
+<!docty  <link rel="stylesheet" href="/styles.css?v=5" />e html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Shine Jewelry</title>
   <link rel="icon" type="image/png" href="assets/Logo/shine-jewelry.png" />
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="stylesheet" href="override.css?v=1" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 </head>
 <body>
@@ -45,18 +46,10 @@
     <section id="shop" class="shop">
       <div class="container">
         <div class="shop-top">
-          <h2 id="shop-title">All Products</h2>
-          <div class="filters">
-            <div id="filter-dropdown" class="filter-dropdown" aria-expanded="false">
-              <button class="filter-trigger" id="filter-trigger" type="button">All categories <span class="caret">▾</span></button>
-              <div class="filter-menu" id="filter-menu" hidden>
-                <!-- Built dynamically by app.js with sections collapsed -->
-              </div>
-            </div>
-          </div>
+          <h2 id="shop-title">Shop by Category</h2>
         </div>
 
-        <div id="products" class="products-grid"></div>
+        <div id="categories" class="categories-grid"></div>
       </div>
     </section>
 

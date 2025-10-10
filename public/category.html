@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Category - Shine Jewelry</title>
+  <link rel="icon" type="image/png" href="/assets/Logo/shine-jewelry.png" />
+  <link rel="stylesheet" href="/styles.css?v=6" />
+  <link rel="stylesheet" href="/override.css?v=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <div id="main-fade">
+  <header class="navbar">
+    <div class="logo" style="display:flex;align-items:center;">
+      <a href="https://www.instagram.com/rm_jewelry_co.10?igsh=MTZhcW13NjVzODU5cQ==" target="_blank" rel="noopener noreferrer" title="Visit our Instagram" class="logo-link" style="display:flex;align-items:center;">
+        <span class="logo-bg">
+          <img src="/assets/Logo/logo.jpg" alt="Logo" class="logo-img" />
+        </span>
+      </a>
+    </div>
+    <nav class="nav-links nav-squares">
+  <a href="/" class="nav-link nav-square">Home</a>
+  <a href="/#shop" class="nav-link nav-square">Shop</a>
+  <a href="/#about-contact" class="nav-link nav-square" id="about-contact-btn">About &amp; Contact</a>
+    </nav>
+    <div class="actions">
+      <button class="icon-btn" id="cart-btn" title="View cart">
+  <i class="fa fa-shopping-cart"></i><span id="cart-count">0</span>
+  <div id="fade-overlay" style="display:none;position:fixed;inset:0;background:rgba(255,255,255,0.8);z-index:9999;transition:opacity 0.5s;"></div>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+
+    <!-- Category Products -->
+    <section id="category-shop" class="shop">
+      <div class="container">
+        <div class="shop-top">
+          <h2 id="category-title">Category Products</h2>
+          <div class="category-info">
+            <span id="category-count">0 items</span>
+          </div>
+        </div>
+
+        <div id="products" class="products-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Product Modal (same as main page) -->
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      <div class="modal-body">
+        <div class="gallery">
+          <button class="gallery-nav left" id="prev-img" aria-label="Previous image">&larr;</button>
+            <img id="modal-img" src="/assets/Loops/loop.jpg" alt="Product image" />
+          <button class="gallery-nav right" id="next-img" aria-label="Next image">&rarr;</button>
+        </div>
+        <div class="modal-info">
+          <h3 id="modal-title"></h3>
+          <p class="modal-price" id="modal-price"></p>
+          <p class="modal-desc" id="modal-desc"></p>
+          <div class="modal-actions">
+            <button class="btn-primary" id="add-to-cart-btn">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Modal -->
+  <div id="cart-overlay" class="overlay" aria-hidden="true">
+    <div class="modal cart-modal" role="dialog" aria-modal="true">
+      <button class="modal-close" id="cart-modal-close" aria-label="Close">&times;</button>
+      <div class="modal-body cart-body">
+        <h3>Shopping Cart</h3>
+        <div id="cart-items"></div>
+        <div class="cart-footer">
+          <div class="cart-total" id="cart-total">Total: 0 EGP</div>
+          <button class="btn-primary" id="checkout-btn">Proceed to Checkout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+  <script src="/category.js"></script>
+</body>
+</html>

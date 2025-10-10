@@ -1,43 +1,51 @@
 {
   "categories": [
     {
-      "id": "bracelets",
-      "name": "Bracelets",
-      "description": "Handpicked bracelet designs."
-    },
-    {
-      "id": "rings",
+      "id": "1",
       "name": "Rings",
-      "description": "Stylish rings collection."
-    },
-    {
-      "id": "earrings",
-      "name": "Earrings",
-      "description": "Elegant earrings."
-    },
-    {
-      "id": "necklaces",
-      "name": "Necklaces",
-      "description": "Pharohs Necklace designed to make you feel the vibes of our culture"
-    },
-    {
-      "id": "silver",
-      "name": "Silver",
-      "description": ""
-    },
-    {
-      "id": "watch",
-      "name": "Watch",
-      "description": ""
-    },
-    {
-      "id": "ring",
-      "name": "Ring",
       "description": "",
       "section": "stainless"
+    },
+    {
+      "id": "2",
+      "name": "Braceleets",
+      "description": "",
+      "section": "stainless"
+    },
+    {
+      "id": "5",
+      "name": "test",
+      "description": "",
+      "section": "silver"
     }
   ],
-  "products": [],
+  "products": [
+    {
+      "id": "coin_1760118823070",
+      "title": "coin",
+      "price": 100,
+      "category": "1",
+      "images": [
+        "uploads/misc/1760118901419_Pharos_Necklace.jpg",
+        "uploads/misc/1760118901420_DSC02193_-_Copy.JPG",
+        "uploads/misc/1760118901490_DSC02193.JPG",
+        "uploads/misc/1760118901523_image.JPG"
+      ],
+      "desc": "good",
+      "oldPrice": 200,
+      "offerPrice": 100
+    },
+    {
+      "id": "coins_1760118933359",
+      "title": "coins",
+      "price": 5400,
+      "category": "1",
+      "images": [
+        "uploads/1/1760118933328_DSC02193_-_Copy.JPG"
+      ],
+      "desc": ""
+    }
+  ],
   "removedProducts": [],
   "removedCategories": []
 }

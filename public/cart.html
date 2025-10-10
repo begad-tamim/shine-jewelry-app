@@ -1,4 +1,4 @@
-<!doctype html>
+<!docty  <link rel="stylesheet" href="/styles.css?v=4" />e html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -6,6 +6,7 @@
   <title>Your Cart - Shine Jewelry</title>
   <link rel="icon" type="image/png" href="assets/Logo/shine-jewelry.png" />
   <link rel="stylesheet" href="styles.css?v=2" />
+  <link rel="stylesheet" href="override.css?v=1" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 </head>
 <body>
@@ -125,6 +126,20 @@
     });
   </script>
   <script src="app.js"></script>
+<script>
+// Force cart rendering on cart page
+document.addEventListener('DOMContentLoaded', function() {
+  // Wait a moment for app.js to fully load
+  setTimeout(function() {
+    if (typeof renderCartPageIfNeeded === 'function') {
+      renderCartPageIfNeeded();
+    }
+    if (typeof updateCartCount === 'function') {
+      updateCartCount();
+    }
+  }, 100);
+});
+</script>
 <script>
 // Show confirmation overlay after payment and animate phrase
 function showOrderConfirmation() {

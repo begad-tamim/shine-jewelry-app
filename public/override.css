@@ -1,0 +1,95 @@
+/* Override styles to ensure black text */
+.nav-link,
+.nav-square,
+.category-title,
+.category-name,
+h1, h2, h3, h4, h5, h6,
+.product-title,
+.price,
+.category-card h2,
+.btn-primary,
+.section-tab,
+.filter-trigger,
+#category-title,
+.shop-top h2,
+.section-title,
+#shop h2,
+.shop-section h2,
+.category-info span,
+a[href*="category.html"] h3,
+.category-card-title {
+    color: black !important;
+}
+
+/* Shop by Category section */
+.shop-by-category h2,
+.shop-by-category .category-name,
+.shop-by-category a,
+.shop-by-category span,
+.card-title,
+.product-count,
+.shop-now,
+.category-card .card-title,
+.category-card .product-count,
+.category-card h3,
+.category-card span {
+    color: black !important;
+}
+
+/* Shop Now button */
+.shop-now,
+.shop-now i,
+a[href*="category.html"] .shop-now {
+    color: black !important;
+    background: pink !important;
+    border: none !important;
+}
+
+.shop-now:hover,
+.shop-now:hover i {
+    background: #ff9bb3 !important; /* slightly darker pink on hover */
+    color: white !important;
+}
+
+/* Category titles and counts */
+#category-title,
+.card-title h3,
+.product-count,
+.category-info span {
+    color: black !important;
+}
+
+/* Product names size increase */
+.product-title,
+.card-title h3,
+.category-card .card-title h3,
+.product-name {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 8px !important;
+}
+
+/* Cart header bar background color only */
+.cart-header-bar {
+    background-color: pink !important;
+}
+
+/* Navigation specific overrides */
+.nav-link.nav-square {
+    background: white !important;
+    color: black !important;
+    border: 1px solid #ddd !important;
+}
+
+.nav-link.nav-square:hover,
+.nav-link.nav-square.active {
+    background: #333 !important;
+    color: white !important;
+}
+
+/* Category titles and headings */
+.category-title,
+.section-title,
+.shop-title {
+    color: black !important;
+}

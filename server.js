@@ -215,24 +215,29 @@ async function processProductQueue() {
 app.post('/api/add-product-background', adminAuth, upload.array('images', 8), (req, res) => {
   try {
     const { title, price, category, desc } = req.body;
-    if (!title || !price || !category) return res.status(400).json({ error: 'title, price, category required' });
+    if (!title || !category || !price) return res.status(400).json({ error: 'title, category, and price required' });
     
-    // Quick validation without loading data
-    const priceNum = parseFloat(price);
-    if (isNaN(priceNum) || priceNum < 0) return res.status(400).json({ error: 'Invalid price' });
+    // Validate regular price only
+    const regularPrice = parseFloat(price);
+    if (isNaN(regularPrice) || regularPrice <= 0) {
+      return res.status(400).json({ error: 'Valid price required' });
+    }
     
     const files = (req.files || []).map(f => path.relative(path.join(__dirname, 'public'), f.path).replace(/\\/g,'/'));
     const id = (title.toLowerCase().replace(/[^a-z0-9]+/g,'_').slice(0,40) + '_' + Date.now()).replace(/__+/g,'_');
     
-    // Add to queue
-    productQueue.push({
+    // Prepare product data with regular pricing only
+    const productData = {
       id,
       title,
-      price: priceNum,
       category,
       images: files,
-      desc: desc || ''
-    });
+      desc: desc || '',
+      price: regularPrice
+    };
+    
+    // Add to queue
+    productQueue.push(productData);
     
     // Start processing queue if not already running
     setTimeout(processProductQueue, 100);
@@ -300,13 +305,34 @@ app.patch('/api/product/:id', adminAuth, upload.array('images', 8), (req, res) =
       prod = { ...staticProd };
       data.products.push(prod);
     }
-    const { title, price, desc, replaceImages } = req.body;
+    const { title, price, oldPrice, offerPrice, desc, replaceImages } = req.body;
     if (title) prod.title = title;
     if (typeof desc !== 'undefined') prod.desc = desc;
-    if (typeof price !== 'undefined') {
-      const n = parseFloat(price);
-      if (isNaN(n) || n < 0) return res.status(400).json({ error: 'Invalid price' });
-      prod.price = n;
+    
+    // Handle pricing updates
+    const regularPrice = parseFloat(price);
+    const oldPriceNum = parseFloat(oldPrice);
+    const offerPriceNum = parseFloat(offerPrice);
+    
+    const hasRegularPrice = !isNaN(regularPrice) && regularPrice > 0;
+    const hasOfferPrices = !isNaN(oldPriceNum) && !isNaN(offerPriceNum) && oldPriceNum > 0 && offerPriceNum > 0;
+    
+    if (hasRegularPrice && hasOfferPrices) {
+      return res.status(400).json({ error: 'Use either regular price OR offer pricing, not both' });
+    }
+    
+    if (hasRegularPrice) {
+      prod.price = regularPrice;
+      // Clear offer pricing if switching to regular price
+      delete prod.oldPrice;
+      delete prod.offerPrice;
+    } else if (hasOfferPrices) {
+      prod.oldPrice = oldPriceNum;
+      prod.offerPrice = offerPriceNum;
+      prod.price = offerPriceNum; // Fallback price
+    } else if (typeof price !== 'undefined' || typeof oldPrice !== 'undefined' || typeof offerPrice !== 'undefined') {
+      // If any pricing field was provided but validation failed
+      return res.status(400).json({ error: 'Invalid pricing data' });
     }
     const newFiles = (req.files || []).map(f => path.relative(path.join(__dirname, 'public'), f.path).replace(/\\/g,'/'));
     const doReplace = (replaceImages === 'true' || replaceImages === '1' || replaceImages === true);
@@ -795,6 +821,11 @@ app.get('/api/confirm-payment', async (req, res) => {
     </body>
     </html>
   `);
+});
+
+// Category pages route
+app.get('/category/:categoryId', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'category.html'));
 });
 
 // Fallback to index.html
