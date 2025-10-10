@@ -166,7 +166,6 @@
     } catch(e){ toast(e.message, true); return null; }
   }
 
-  function buildPanelHtml(cats, prods){
   async function getCarouselImages() {
     try {
       const r = await fetch('/api/carousel-images');
@@ -296,7 +295,6 @@
     const data = await apiGetProducts();
     const carouselImages = await getCarouselImages();
     const cats = data.categories || []; const prods = data.products || [];
-    container.innerHTML = buildPanelHtml(cats, prods);
     container.innerHTML = buildPanelHtml(cats, prods, carouselImages);
 
     // Carousel form

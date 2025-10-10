@@ -23,7 +23,7 @@
     {
       "id": "coin_1760118823070",
       "title": "coin",
-      "price": 100,
+      "price": 150,
       "category": "1",
       "images": [
         "uploads/misc/1760118901419_Pharos_Necklace.jpg",
@@ -33,7 +33,7 @@
       ],
       "desc": "good",
       "oldPrice": 200,
-      "offerPrice": 100
+      "offerPrice": 150
     },
     {
       "id": "coins_1760118933359",
