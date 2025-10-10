@@ -75,6 +75,67 @@ main,
     z-index: 3;
   }
 }
+/* --- WhatsApp Float Button --- */
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  animation: whatsappPulse 2s infinite;
+}
+
+.whatsapp-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  border-radius: 50%;
+  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+  text-decoration: none;
+  color: white;
+  font-size: 28px;
+  transition: all 0.3s ease;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.whatsapp-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 35px rgba(37, 211, 102, 0.6);
+  background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
+}
+
+.whatsapp-btn:active {
+  transform: scale(0.95);
+}
+
+@keyframes whatsappPulse {
+  0% {
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+  }
+  50% {
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.8), 0 0 0 10px rgba(37, 211, 102, 0.1);
+  }
+  100% {
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+  }
+}
+
+/* Mobile responsiveness for WhatsApp button */
+@media (max-width: 768px) {
+  .whatsapp-float {
+    bottom: 15px;
+    left: 15px;
+  }
+  
+  .whatsapp-btn {
+    width: 55px;
+    height: 55px;
+    font-size: 24px;
+  }
+}
+
 /* --- Carousel Marketing Styles --- */
 .carousel-marketing {
   /* Shrink to content so the card is just a bit wider than the image */
