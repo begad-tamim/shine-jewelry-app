@@ -126,9 +126,25 @@ document.addEventListener('DOMContentLoaded', () => {
   updateActiveNav();
 });
 // app.js - frontend logic
-// --- Loops Carousel for Home Card ---
-document.addEventListener('DOMContentLoaded', function() {
-  const loopsImages = [
+// --- Dynamic Carousel for Home Card ---
+async function loadCarouselImages() {
+  try {
+    const response = await fetch('/api/carousel-images');
+    if (!response.ok) return [];
+    const data = await response.json();
+    return data.images || [];
+  } catch (e) {
+    console.warn('Failed to load carousel images', e);
+    return [];
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+  // Load carousel images from server
+  const carouselImages = await loadCarouselImages();
+  
+  // Fallback to default images if no carousel images found
+  const loopsImages = carouselImages.length > 0 ? carouselImages : [
     'assets/Loops/loop.jpg',
     'assets/Loops/loop(1).jpg',
     'assets/Loops/loop(2).jpg',
@@ -136,9 +152,15 @@ document.addEventListener('DOMContentLoaded', function() {
     'assets/Loops/loop(1) copy.jpg',
     'assets/Loops/loop(2) copy.jpg'
   ];
+  
   let loopsIdx = 0;
   const loopsImgEl = document.getElementById('loops-carousel-img');
-  if (loopsImgEl) {
+  
+  if (loopsImgEl && loopsImages.length > 0) {
+    // Set initial image
+    loopsImgEl.src = loopsImages[0];
+    
+    // Start carousel rotation
     setInterval(() => {
       loopsIdx = (loopsIdx + 1) % loopsImages.length;
       loopsImgEl.style.opacity = 0;

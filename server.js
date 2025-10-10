@@ -500,6 +500,57 @@ async function sendEmailWithRetry(mailOptions, maxRetries = 3) {
   }
 }
 
+// Carousel images endpoints
+app.get('/api/carousel-images', (req, res) => {
+  try {
+    const carouselDir = path.join(__dirname, 'public', 'uploads', 'carousel');
+    if (!fs.existsSync(carouselDir)) {
+      return res.json({ ok: true, images: [] });
+    }
+    
+    const files = fs.readdirSync(carouselDir)
+      .filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f))
+      .map(f => `uploads/carousel/${f}`)
+      .sort(); // Sort for consistent ordering
+    
+    res.json({ ok: true, images: files });
+  } catch (err) {
+    console.error('Carousel images error', err);
+    res.status(500).json({ error: 'Failed to load carousel images' });
+  }
+});
+
+app.post('/api/carousel-images', adminAuth, upload.array('images', 10), (req, res) => {
+  try {
+    const carouselDir = path.join(__dirname, 'public', 'uploads', 'carousel');
+    
+    // Ensure carousel directory exists
+    if (!fs.existsSync(carouselDir)) {
+      fs.mkdirSync(carouselDir, { recursive: true });
+    }
+    
+    // Clear existing carousel images
+    const existingFiles = fs.readdirSync(carouselDir);
+    existingFiles.forEach(file => {
+      const filePath = path.join(carouselDir, file);
+      fs.unlinkSync(filePath);
+    });
+    
+    // Save new images with carousel prefix
+    const files = (req.files || []).map(f => {
+      const newName = `carousel_${Date.now()}_${Math.random().toString(36).substr(2, 9)}_${f.originalname}`;
+      const newPath = path.join(carouselDir, newName);
+      fs.renameSync(f.path, newPath);
+      return path.relative(path.join(__dirname, 'public'), newPath).replace(/\\/g, '/');
+    });
+    
+    res.json({ ok: true, images: files });
+  } catch (err) {
+    console.error('Carousel upload error', err);
+    res.status(500).json({ error: 'Failed to update carousel images' });
+  }
+});
+
 // Health
 app.get('/api/ping', (req, res) => res.json({ ok: true }));
 
