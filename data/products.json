@@ -8,42 +8,60 @@
     },
     {
       "id": "2",
-      "name": "Braceleets",
+      "name": "سللاسل",
       "description": "",
       "section": "stainless"
     },
     {
-      "id": "5",
-      "name": "test",
+      "id": "3",
+      "name": "انسيالات",
+      "description": "",
+      "section": "stainless"
+    },
+    {
+      "id": "4",
+      "name": "Ring",
       "description": "",
       "section": "silver"
     }
   ],
   "products": [
     {
-      "id": "coin_1760118823070",
-      "title": "coin",
-      "price": 150,
+      "id": "_1762879630522",
+      "title": "خاتم فرعوني",
+      "price": 300,
       "category": "1",
       "images": [
-        "uploads/misc/1760118901419_Pharos_Necklace.jpg",
-        "uploads/misc/1760118901420_DSC02193_-_Copy.JPG",
-        "uploads/misc/1760118901490_DSC02193.JPG",
-        "uploads/misc/1760118901523_image.JPG"
+        "uploads/1/1762879592602_IMG_1428.jpeg",
+        "uploads/1/1762879623699_IMG_1424.jpeg",
+        "uploads/1/1762879627691_IMG_1429.jpeg"
       ],
-      "desc": "good",
-      "oldPrice": 200,
-      "offerPrice": 150
+      "desc": "خاتم من الاستانلس عيار30",
+      "oldPrice": 400,
+      "offerPrice": 300
     },
     {
-      "id": "coins_1760118933359",
-      "title": "coins",
-      "price": 5400,
-      "category": "1",
+      "id": "_1762879691841",
+      "title": "سلسلة كوين",
+      "price": 400,
+      "category": "2",
       "images": [
-        "uploads/1/1760118933328_DSC02193_-_Copy.JPG"
+        "uploads/2/1762879681843_232D2410-1B78-4806-970F-C1A6656FA365.jpeg",
+        "uploads/2/1762879682543_IMG_1516.jpeg",
+        "uploads/2/1762879687556_IMG_1519.jpeg"
       ],
-      "desc": ""
+      "desc": "سلسلة ستانلس كوين"
+    },
+    {
+      "id": "_1762879816930",
+      "title": "أسورة نجوم",
+      "price": 560,
+      "category": "3",
+      "images": [
+        "uploads/3/1762879812186_Photoroom_20250910_121819.jpeg",
+        "uploads/3/1762879813121_IMG_1005.jpeg"
+      ],
+      "desc": "أسورة نجوم إستانلس"
     }
   ],
   "removedProducts": [],

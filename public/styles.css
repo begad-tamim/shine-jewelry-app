@@ -171,7 +171,7 @@ main,
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: linear-gradient(90deg, #fffbe6 0%, #fbeec1 50%, #fffbe6 100%);
+  background: #000000; /* Changed from beige gradient to solid black */
   opacity: 0.95;
 }
 .carousel-img-marketing {
@@ -1135,35 +1135,39 @@ body {
   }
   
   .category-card img {
-    aspect-ratio: 1/1;
+    aspect-ratio: 16/9 !important; /* Match desktop ratio - larger image */
+    width: 100% !important;
   }
   
   .category-card .card-title {
-    font-size: 0.95rem;
-    margin-bottom: 6px;
+    font-size: 0.9rem !important; /* Further reduced */
+    margin-bottom: 2px !important; /* Further reduced from: 4px */
     line-height: 1.2;
     font-weight: 600;
   }
   
   .category-card .card-body {
-    padding: 12px 8px 14px;
+    padding: 4px 4px 5px !important; /* Further reduced since items are now side by side */
   }
   
   .category-card .card-meta {
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-start;
+    flex-direction: row !important; /* Changed to row to place items side by side */
+    justify-content: space-between !important; /* Product count left, Shop Now right */
+    align-items: center !important;
+    gap: 4px !important; /* Reduced gap for compact layout */
+    margin-top: 2px !important; /* Reduced margin */
   }
   
   .category-card .product-count {
-    font-size: 0.8rem;
+    font-size: 0.7rem !important; /* Smaller font */
+    margin: 0 !important; /* Remove any margins */
   }
   
   .shop-now {
-    font-size: 0.75rem;
-    padding: 4px 8px;
-    align-self: flex-end;
-    margin-top: auto;
+    font-size: 0.7rem !important; /* Smaller font */
+    padding: 3px 6px !important; /* Smaller padding */
+    margin: 0 !important; /* Remove margins */
+    align-self: auto !important; /* Reset align-self */
   }
   
   .material-badge {
@@ -1189,21 +1193,26 @@ body {
   }
   
   .category-card .card-title {
-    font-size: 1.1rem;
-    margin-bottom: 10px;
+    font-size: 1.0rem !important; /* Slightly reduced */
+    margin-bottom: 4px !important; /* Further reduced from: 6px */
   }
   
   .category-card .card-body {
-    padding: 16px 16px 18px;
+    padding: 6px 10px 8px !important; /* Further reduced from: 10px 12px 12px */
+  }
+  
+  .category-card img {
+    aspect-ratio: 16/9 !important; /* Match desktop ratio */
+    width: 100% !important;
   }
   
   .category-card .product-count {
-    font-size: 0.9rem;
+    font-size: 0.8rem !important;
   }
   
   .shop-now {
-    font-size: 0.85rem;
-    padding: 6px 10px;
+    font-size: 0.75rem !important;
+    padding: 4px 8px !important;
   }
   
   .material-badge {
@@ -1216,6 +1225,37 @@ body {
   
   .material-icon {
     font-size: 1.1rem;
+  }
+  
+  /* Product cards - tablet styles to match category cards */
+  .card-body {
+    padding: 4px 7px 5px !important; /* Reduced padding for tablets */
+    gap: 2px !important;
+  }
+  .card-title {
+    font-size: 0.75rem !important;
+    margin-bottom: 0px !important;
+    line-height: 1.2 !important;
+  }
+  .card img {
+    aspect-ratio: 16/9 !important; /* Larger image like category cards */
+  }
+  .card-meta {
+    margin-top: 0px !important;
+    gap: 2px !important;
+  }
+  .card-meta .price {
+    font-size: 0.75rem !important;
+    margin: 0 !important;
+  }
+  .card-meta .price-container {
+    font-size: 0.75rem !important;
+  }
+  .card-meta .old-price {
+    font-size: 0.65rem !important;
+  }
+  .card-meta .offer-price {
+    font-size: 0.75rem !important;
   }
 }
 
@@ -1245,7 +1285,7 @@ body {
 
 .category-card img {
   width: 100%;
-  aspect-ratio: 4/3;
+  aspect-ratio: 16/9; /* Increased from: 3/2 (much larger image area) */
   object-fit: cover;
   object-position: center center;
   transition: transform 0.4s ease;
@@ -1305,7 +1345,7 @@ body {
 }
 
 .category-card .card-body {
-  padding: 20px 24px 24px;
+  padding: 6px 12px 8px; /* Further reduced from: 10px 16px 12px */
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -1314,9 +1354,9 @@ body {
 
 .category-card .card-title {
   font-weight: 700;
-  font-size: 1.3rem;
+  font-size: 1.2rem; /* Slightly reduced font size */
   color: #a97a2f;
-  margin-bottom: 12px;
+  margin-bottom: 4px; /* Further reduced from: 6px */
   text-transform: capitalize;
   letter-spacing: 0.5px;
   text-align: center;
@@ -1327,15 +1367,16 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
+  gap: 8px; /* Reduced spacing between items */
 }
 
 .category-card .product-count {
   color: #7c4d00;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.85rem; /* Reduced font size */
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px; /* Reduced gap */
 }
 
 .category-card .product-count i {
@@ -1346,12 +1387,12 @@ body {
 .shop-now {
   color: #a97a2f;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.8rem; /* Reduced font size */
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px; /* Reduced gap */
   transition: all 0.3s ease;
-  padding: 6px 12px;
+  padding: 4px 10px; /* Reduced padding */
   border-radius: 20px;
   background: rgba(169, 122, 47, 0.1);
   border: 1px solid rgba(169, 122, 47, 0.2);
@@ -1380,16 +1421,16 @@ body {
 .card:hover{transform:translateY(-8px);box-shadow:0 18px 50px rgba(20,20,20,0.08)}
 .card img {
   width: 100%;
-  aspect-ratio: 1/1;
+  aspect-ratio: 16/9; /* Increased from: 4/3 (much larger image area like category cards) */
   object-fit: cover;
   object-position: center center;
   border-radius: 18px;
   background: #f8f3e6;
 }
-.card-body{padding:16px;display:flex;flex-direction:column;gap:10px}
-.card-title{font-weight:700}
-.card-meta{display:flex;justify-content:center;align-items:center}
-.card-meta .price{margin:0 auto;text-align:center}
+.card-body{padding:6px 10px 8px;display:flex;flex-direction:column;gap:3px} /* Further reduced padding and gap to match category cards */
+.card-title{font-weight:700;font-size:0.85rem;margin-bottom:1px;line-height:1.25} /* Further reduced font size and margin */
+.card-meta{display:flex;justify-content:center;align-items:center;gap:4px;margin-top:0} /* Reduced gap between items, no margin */
+.card-meta .price{margin:0 auto;text-align:center;font-size:0.85rem;padding:0} /* Further reduced price font size, no padding */
 .price{font-weight:800;color:var(--accent)}
 .btn-primary{background:var(--accent);color:#111;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700}
 .btn-ghost{background:transparent;border:1px solid #ddd;padding:8px 12px;border-radius:8px;cursor:pointer}
@@ -1559,6 +1600,36 @@ body {
     overflow-y: auto;
     padding-right: 6px;
   }
+  /* Product cards - reduce white space on mobile */
+  .card-body {
+    padding: 4px 6px 5px !important; /* Further reduced for mobile to match category cards */
+    gap: 2px !important; /* Reduced gap between title and price */
+  }
+  .card-title {
+    font-size: 0.75rem !important; /* Further reduced */
+    margin-bottom: 0px !important; /* Remove margin */
+    line-height: 1.2 !important; /* Tighter line height */
+  }
+  .card img {
+    aspect-ratio: 16/9 !important; /* Match desktop - larger image like category cards */
+  }
+  .card-meta {
+    margin-top: 0px !important; /* Remove margin */
+    padding: 0 !important;
+  }
+  .card-meta .price {
+    font-size: 0.75rem !important; /* Smaller price font */
+    margin: 0 !important;
+  }
+  .card-meta .price-container {
+    font-size: 0.75rem !important;
+  }
+  .card-meta .old-price {
+    font-size: 0.65rem !important;
+  }
+  .card-meta .offer-price {
+    font-size: 0.75rem !important;
+  }
   .hero{height:auto;padding:24px 0}
   .hero-slider{position:relative;width:94vw;max-width:94vw;height:auto;max-height:none}
   .hero-overlay{max-width:90%;padding:16px}
@@ -1570,6 +1641,41 @@ body {
   .carousel-marketing{height:auto;min-height:200px; padding: 10px 12px 28px;}
   .carousel-img-marketing{width:60vw;height:auto;min-height:140px}
   .modal .gallery img{height:auto;max-height:60vh}
+  
+  /* Product cards - additional mobile styles for small phones */
+  .card-body {
+    padding: 3px 4px 4px !important; /* Even more reduced for small phones */
+    gap: 1px !important; /* Minimal gap */
+  }
+  .card-title {
+    font-size: 0.7rem !important; /* Smaller font for very small screens */
+    margin-bottom: 0px !important; /* No margin */
+    line-height: 1.15 !important; /* Very tight line height */
+    padding-bottom: 1px !important; /* Small padding instead of margin */
+  }
+  .card img {
+    aspect-ratio: 16/9 !important; /* Match desktop - larger image like category cards */
+  }
+  .card-meta {
+    margin-top: 0px !important; /* No margin */
+    padding: 0 !important;
+    gap: 0px !important; /* No gap */
+  }
+  .card-meta .price {
+    font-size: 0.7rem !important; /* Smaller price font for small screens */
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .card-meta .price-container {
+    font-size: 0.7rem !important;
+    gap: 2px !important; /* Minimal gap between old and new price */
+  }
+  .card-meta .old-price {
+    font-size: 0.6rem !important;
+  }
+  .card-meta .offer-price {
+    font-size: 0.7rem !important;
+  }
   
   /* Mobile modal adjustments */
   .modal-info {
