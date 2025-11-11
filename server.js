@@ -560,12 +560,35 @@ app.post('/api/contact', async (req, res) => {
     const { name, email, message } = req.body;
     if (!name || !email || !message) return res.status(400).json({ error: 'Missing fields' });
 
+    // Escape helper to avoid HTML injection
+    const esc = (v) => (v || '').toString().replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+    // Create HTML email template similar to order form
+    const contactHtml = `
+      <div style='text-align:center;margin-bottom:18px;'>
+        <img src='https://shine-jewelry.up.railway.app/assets/Logo/shine-jewelry.png' alt='Shine Jewelry Logo' style='height:96px;width:auto;border-radius:24px;'>
+      </div>
+      <h2 style='color:#a97a2f;margin:0 0 6px;font-size:1.5rem;'>New Contact Message</h2>
+      <div style='background:#fffbe9;border:1px solid #f1d9a6;border-radius:14px;padding:14px 18px;margin-bottom:18px;'>
+        <div style='font-weight:700;color:#a97a2f;margin-bottom:8px;'>Contact Details</div>
+        <div style='font-size:0.85rem;line-height:1.5;color:#7c4d00;'>
+          <strong>Name:</strong> ${esc(name)}<br>
+          <strong>Email:</strong> <a href='mailto:${esc(email)}' style='color:#a97a2f;text-decoration:none;'>${esc(email)}</a><br>
+        </div>
+      </div>
+      <div style='background:#fffbe9;border:1px solid #f1d9a6;border-radius:14px;padding:14px 18px;margin-bottom:18px;'>
+        <div style='font-weight:700;color:#a97a2f;margin-bottom:8px;'>Message</div>
+        <div style='font-size:0.9rem;line-height:1.6;color:#7c4d00;white-space:pre-wrap;'>${esc(message)}</div>
+      </div>
+      <div style='margin-top:18px;font-size:0.75rem;color:#9c6d16;'>Generated automatically • ${new Date().toLocaleString()}</div>
+    `;
+
     const mailOptions = {
       from: `"Website Contact" <${process.env.SMTP_USER}>`,
       to: STORE_OWNER_EMAIL,
       replyTo: email,
       subject: `Contact message from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+      html: contactHtml
     };
 
     await sendEmailWithRetry(mailOptions);

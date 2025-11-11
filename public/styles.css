@@ -87,8 +87,8 @@ main,
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   background: transparent;
   border-radius: 50%;
   box-shadow: none;
@@ -101,13 +101,14 @@ main,
 }
 
 .whatsapp-icon {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
   display: block;
   transition: transform 0.3s ease, filter 0.3s ease;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
   animation: whatsappPulse 2s infinite;
+  border-radius: 12px; /* Rounded corners for better visual appeal */
 }
 
 .whatsapp-btn:hover .whatsapp-icon {
@@ -145,16 +146,17 @@ main,
   }
   
   .whatsapp-btn {
-    width: 55px;
-    height: 55px;
+    width: 48px;
+    height: 48px;
     background: transparent;
   }
   
   .whatsapp-icon {
-    width: 55px;
-    height: 55px;
+    width: 48px;
+    height: 48px;
     filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.2));
     animation: whatsappPulse 2s infinite;
+    border-radius: 11px; /* Slightly smaller radius for mobile */
   }
   
   .whatsapp-btn:hover .whatsapp-icon {
@@ -1157,9 +1159,9 @@ body {
   
   .category-card .card-meta {
     display: grid !important;
-    grid-template-columns: 0.7fr 2.8fr 0.8fr !important; /* Give more space to center column, shift left */
+    grid-template-columns: auto 1fr auto !important; /* Three columns: left (items), middle (title), right (shop now) */
     align-items: center !important;
-    gap: 4px !important; /* Reduced gap to give more space */
+    gap: 8px !important;
     margin-top: auto !important;
   }
   
@@ -1168,15 +1170,16 @@ body {
     margin: 0 !important;
     justify-self: start !important; /* Left align */
     grid-column: 1 !important;
+    white-space: nowrap !important;
   }
   
   .category-card .card-title {
     font-size: 0.9rem !important;
     margin: 0 !important;
-    text-align: left !important; /* Left align text within center column */
-    justify-self: start !important; /* Align to start of center column */
+    text-align: right !important; /* Right align text */
+    justify-self: end !important; /* Align to end (right side) */
     grid-column: 2 !important;
-    padding-left: 4px !important; /* Small left padding */
+    padding-right: 6px !important; /* Small right padding */
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
@@ -1188,6 +1191,7 @@ body {
     margin: 0 !important;
     justify-self: end !important; /* Right align */
     grid-column: 3 !important;
+    white-space: nowrap !important;
   }
   
   .material-badge {
@@ -1223,17 +1227,17 @@ body {
   
   .category-card .card-meta {
     display: grid !important;
-    grid-template-columns: 0.8fr 2.4fr 0.8fr !important; /* Give more space to center column */
-    gap: 4px !important; /* Reduced gap */
+    grid-template-columns: auto 1fr auto !important; /* Three columns: left (items), middle (title), right (shop now) */
+    gap: 8px !important;
   }
   
   .category-card .card-title {
     font-size: 0.95rem !important;
     margin: 0 !important;
-    text-align: left !important; /* Left align text */
-    justify-self: start !important; /* Align to start */
+    text-align: right !important; /* Right align text */
+    justify-self: end !important; /* Align to end (right side) */
     grid-column: 2 !important;
-    padding-left: 4px !important; /* Small left padding */
+    padding-right: 6px !important; /* Small right padding */
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
@@ -1243,6 +1247,7 @@ body {
     font-size: 0.8rem !important;
     justify-self: start !important;
     grid-column: 1 !important;
+    white-space: nowrap !important;
   }
   
   .shop-now {
@@ -1250,6 +1255,7 @@ body {
     padding: 4px 8px !important;
     justify-self: end !important;
     grid-column: 3 !important;
+    white-space: nowrap !important;
   }
   
   .material-badge {
