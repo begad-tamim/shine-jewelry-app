@@ -311,6 +311,9 @@ function renderCategories() {
             <i class="fa fa-gem"></i>
             ${productCount} item${productCount !== 1 ? 's' : ''}
           </div>
+          <div class="category-name">
+            ${escapeHtml(categoryName)}
+          </div>
         </div>
       </div>
     `;
