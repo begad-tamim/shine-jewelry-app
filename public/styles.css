@@ -1159,7 +1159,7 @@ body {
   
   .category-card .card-meta {
     display: grid !important;
-    grid-template-columns: auto 1fr auto !important; /* Three columns: left (items), middle (title), right (shop now) */
+    grid-template-columns: 1fr 1fr !important; /* Two columns: left (items), right (title) */
     align-items: center !important;
     gap: 8px !important;
     margin-top: auto !important;
@@ -1179,19 +1179,14 @@ body {
     text-align: right !important; /* Right align text */
     justify-self: end !important; /* Align to end (right side) */
     grid-column: 2 !important;
-    padding-right: 6px !important; /* Small right padding */
+    padding-right: 0 !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
   }
   
-  .shop-now {
-    font-size: 0.7rem !important;
-    padding: 3px 8px !important;
-    margin: 0 !important;
-    justify-self: end !important; /* Right align */
-    grid-column: 3 !important;
-    white-space: nowrap !important;
+  .category-card .shop-now {
+    display: none !important; /* Hide shop now on mobile */
   }
   
   .material-badge {
@@ -1227,7 +1222,7 @@ body {
   
   .category-card .card-meta {
     display: grid !important;
-    grid-template-columns: auto 1fr auto !important; /* Three columns: left (items), middle (title), right (shop now) */
+    grid-template-columns: 1fr 1fr !important; /* Two columns: left (items), right (title) */
     gap: 8px !important;
   }
   
@@ -1237,7 +1232,7 @@ body {
     text-align: right !important; /* Right align text */
     justify-self: end !important; /* Align to end (right side) */
     grid-column: 2 !important;
-    padding-right: 6px !important; /* Small right padding */
+    padding-right: 0 !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
@@ -1250,12 +1245,8 @@ body {
     white-space: nowrap !important;
   }
   
-  .shop-now {
-    font-size: 0.75rem !important;
-    padding: 4px 8px !important;
-    justify-self: end !important;
-    grid-column: 3 !important;
-    white-space: nowrap !important;
+  .category-card .shop-now {
+    display: none !important; /* Hide shop now on tablet */
   }
   
   .material-badge {
@@ -1414,10 +1405,10 @@ body {
 
 .category-card .card-meta {
   display: grid;
-  grid-template-columns: 0.8fr 2.4fr 0.8fr; /* Give more space to center column for title */
+  grid-template-columns: 1fr 1fr; /* Two columns: left (items), right (title) */
   align-items: center;
   margin-top: auto;
-  gap: 6px; /* Reduced gap */
+  gap: 8px;
 }
 
 .category-card .product-count {
@@ -1438,10 +1429,10 @@ body {
   margin: 0; /* Remove margin */
   text-transform: capitalize;
   letter-spacing: 0.5px;
-  text-align: left; /* Left align the title */
-  justify-self: start; /* Align to start of center column */
-  grid-column: 2; /* Place in middle column */
-  padding-left: 4px; /* Small left padding */
+  text-align: right; /* Right align the title */
+  justify-self: end; /* Align to end (right side) */
+  grid-column: 2; /* Place in right column */
+  padding-right: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1450,6 +1441,10 @@ body {
 .category-card .product-count i {
   color: #a97a2f;
   font-size: 0.9rem;
+}
+
+.category-card .shop-now {
+  display: none; /* Hide shop now button on all category cards */
 }
 
 .shop-now {

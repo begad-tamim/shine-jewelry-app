@@ -10,7 +10,7 @@ const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const STORE_OWNER_EMAIL = process.env.STORE_OWNER_EMAIL || 'begadtamim.a@gmail.com';
+const STORE_OWNER_EMAIL = process.env.STORE_OWNER_EMAIL || 'rehabmahmoud1979nojaya@gmail.com';
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -431,7 +431,7 @@ const gmailTransporter = nodemailer.createTransport({
 
 // Email retry helper - Use ONLY Resend for all emails (Railway compatible)
 async function sendEmailWithRetry(mailOptions, maxRetries = 3) {
-  const isOwnerEmail = mailOptions.to === process.env.STORE_OWNER_EMAIL;
+  const isOwnerEmail = mailOptions.to === STORE_OWNER_EMAIL;
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -478,20 +478,34 @@ async function sendEmailWithRetry(mailOptions, maxRetries = 3) {
       }
 
       // Send via Resend API
+      console.log(`Sending email attempt ${attempt}:`, {
+        to: emailData.to,
+        subject: emailData.subject,
+        hasHtml: !!emailData.html,
+        hasText: !!emailData.text,
+        reply_to: emailData.reply_to
+      });
+
       const result = await resend.emails.send(emailData);
+      
       if (result.error) {
-        throw new Error(`Resend API Error: ${result.error.message}`);
+        console.error('Resend API error response:', result.error);
+        throw new Error(`Resend API Error: ${JSON.stringify(result.error)}`);
       }
       
+      console.log('Resend API success response:', result);
+      
       if (isOwnerEmail) {
-        console.log('Owner email sent successfully via Resend');
+        console.log('Owner email sent successfully via Resend, email ID:', result.data?.id);
       } else {
-        console.log('Customer email sent successfully via Resend');
+        console.log('Customer email sent successfully via Resend, email ID:', result.data?.id);
       }
       return true;
     } catch (error) {
       console.error(`Email attempt ${attempt} failed:`, error.message);
+      console.error(`Email error stack:`, error.stack);
       if (attempt === maxRetries) {
+        console.error('All email attempts failed. Final error:', error);
         throw error;
       }
       // Wait before retry (exponential backoff)
@@ -558,7 +572,12 @@ app.get('/api/ping', (req, res) => res.json({ ok: true }));
 app.post('/api/contact', async (req, res) => {
   try {
     const { name, email, message } = req.body;
-    if (!name || !email || !message) return res.status(400).json({ error: 'Missing fields' });
+    if (!name || !email || !message) {
+      console.error('Contact form validation failed: Missing fields');
+      return res.status(400).json({ error: 'Missing fields' });
+    }
+
+    console.log('Contact form submission received:', { name, email, messageLength: message.length });
 
     // Escape helper to avoid HTML injection
     const esc = (v) => (v || '').toString().replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
@@ -591,11 +610,17 @@ app.post('/api/contact', async (req, res) => {
       html: contactHtml
     };
 
+    console.log('Attempting to send contact email to:', STORE_OWNER_EMAIL);
+    console.log('Reply to:', email);
+    console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
+
     await sendEmailWithRetry(mailOptions);
+    console.log('Contact email sent successfully');
     return res.json({ ok: true, message: 'Message sent' });
   } catch (err) {
-    console.error('Contact error', err);
-    return res.status(500).json({ error: 'Failed to send message' });
+    console.error('Contact error details:', err);
+    console.error('Contact error stack:', err.stack);
+    return res.status(500).json({ error: 'Failed to send message: ' + err.message });
   }
 });
 
