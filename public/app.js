@@ -303,7 +303,6 @@ function renderCategories() {
     card.innerHTML = `
       <div class="category-image-container">
         <img src="${coverImage}" alt="${escapeHtml(categoryName)}" loading="lazy" />
-        <div class="category-title-overlay">${escapeHtml(categoryName)}</div>
         ${materialBadge}
       </div>
       <div class="card-body">

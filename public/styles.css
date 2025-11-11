@@ -1179,15 +1179,6 @@ body {
     display: none !important; /* Hide shop now on mobile */
   }
   
-  .category-title-overlay {
-    top: 8px !important;
-    left: 8px !important;
-    padding: 4px 10px !important;
-    font-size: 0.8rem !important;
-    border-radius: 16px !important;
-    max-width: calc(100% - 16px) !important;
-  }
-  
   .material-badge {
     padding: 4px 8px;
     font-size: 0.7rem;
@@ -1335,26 +1326,6 @@ body {
   background: #f8f3e6;
 }
 
-.category-title-overlay {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: #a97a2f;
-  text-transform: capitalize;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 2;
-  max-width: calc(100% - 24px);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
 .category-card:hover img {
   transform: scale(1.05);
@@ -1960,18 +1931,6 @@ body {
 @media (max-width: 768px) {
   .category-material-badge {
     display: flex;
-  }
-}
-
-/* Category title overlay mobile styles */
-@media (max-width: 480px) {
-  .category-title-overlay {
-    top: 8px;
-    left: 8px;
-    padding: 4px 10px;
-    font-size: 0.8rem;
-    border-radius: 16px;
-    max-width: calc(100% - 16px);
   }
 }
 
