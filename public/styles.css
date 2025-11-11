@@ -81,7 +81,6 @@ main,
   bottom: 20px;
   left: 20px;
   z-index: 1000;
-  animation: whatsappPulse 2s infinite;
 }
 
 .whatsapp-btn {
@@ -90,47 +89,51 @@ main,
   justify-content: center;
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  background: transparent;
   border-radius: 50%;
-  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+  box-shadow: none;
   text-decoration: none;
   color: white;
   font-size: 28px;
-  transition: all 0.3s ease;
-  border: 3px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease;
+  border: none;
+  padding: 0;
 }
 
 .whatsapp-icon {
-  width: 32px;
-  height: 32px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
   display: block;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+  animation: whatsappPulse 2s infinite;
 }
 
 .whatsapp-btn:hover .whatsapp-icon {
   transform: scale(1.1);
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.3));
 }
 
 .whatsapp-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 12px 35px rgba(37, 211, 102, 0.6);
-  background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
+  transform: none;
+  box-shadow: none;
+  background: transparent;
 }
 
-.whatsapp-btn:active {
+.whatsapp-btn:active .whatsapp-icon {
   transform: scale(0.95);
 }
 
 @keyframes whatsappPulse {
   0% {
-    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
   }
   50% {
-    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.8), 0 0 0 10px rgba(37, 211, 102, 0.1);
+    filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.3));
   }
   100% {
-    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
   }
 }
 
@@ -144,11 +147,19 @@ main,
   .whatsapp-btn {
     width: 55px;
     height: 55px;
+    background: transparent;
   }
   
   .whatsapp-icon {
-    width: 28px;
-    height: 28px;
+    width: 55px;
+    height: 55px;
+    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.2));
+    animation: whatsappPulse 2s infinite;
+  }
+  
+  .whatsapp-btn:hover .whatsapp-icon {
+    filter: drop-shadow(0 5px 14px rgba(0, 0, 0, 0.3));
+    animation: none; /* Stop animation on hover */
   }
 }
 
@@ -1146,9 +1157,9 @@ body {
   
   .category-card .card-meta {
     display: grid !important;
-    grid-template-columns: 1fr 2fr 1fr !important; /* Three columns layout */
+    grid-template-columns: 0.7fr 2.8fr 0.8fr !important; /* Give more space to center column, shift left */
     align-items: center !important;
-    gap: 6px !important;
+    gap: 4px !important; /* Reduced gap to give more space */
     margin-top: auto !important;
   }
   
@@ -1162,9 +1173,13 @@ body {
   .category-card .card-title {
     font-size: 0.9rem !important;
     margin: 0 !important;
-    text-align: center !important;
-    justify-self: center !important; /* Center align */
+    text-align: left !important; /* Left align text within center column */
+    justify-self: start !important; /* Align to start of center column */
     grid-column: 2 !important;
+    padding-left: 4px !important; /* Small left padding */
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
   }
   
   .shop-now {
@@ -1208,15 +1223,20 @@ body {
   
   .category-card .card-meta {
     display: grid !important;
-    grid-template-columns: 1fr 2fr 1fr !important; /* Three columns layout */
+    grid-template-columns: 0.8fr 2.4fr 0.8fr !important; /* Give more space to center column */
+    gap: 4px !important; /* Reduced gap */
   }
   
   .category-card .card-title {
     font-size: 0.95rem !important;
     margin: 0 !important;
-    text-align: center !important;
-    justify-self: center !important;
+    text-align: left !important; /* Left align text */
+    justify-self: start !important; /* Align to start */
     grid-column: 2 !important;
+    padding-left: 4px !important; /* Small left padding */
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
   }
   
   .category-card .product-count {
@@ -1388,10 +1408,10 @@ body {
 
 .category-card .card-meta {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr; /* Three columns: left (items), center (title), right (shop now) */
+  grid-template-columns: 0.8fr 2.4fr 0.8fr; /* Give more space to center column for title */
   align-items: center;
   margin-top: auto;
-  gap: 8px;
+  gap: 6px; /* Reduced gap */
 }
 
 .category-card .product-count {
@@ -1412,9 +1432,13 @@ body {
   margin: 0; /* Remove margin */
   text-transform: capitalize;
   letter-spacing: 0.5px;
-  text-align: center; /* Center the title */
-  justify-self: center; /* Center the title in grid */
+  text-align: left; /* Left align the title */
+  justify-self: start; /* Align to start of center column */
   grid-column: 2; /* Place in middle column */
+  padding-left: 4px; /* Small left padding */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .category-card .product-count i {
