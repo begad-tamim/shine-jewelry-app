@@ -306,12 +306,12 @@ function renderCategories() {
         ${materialBadge}
       </div>
       <div class="card-body">
-        <div class="card-title">${escapeHtml(categoryName)}</div>
         <div class="card-meta">
           <div class="product-count">
             <i class="fa fa-gem"></i>
             ${productCount} item${productCount !== 1 ? 's' : ''}
           </div>
+          <div class="card-title">${escapeHtml(categoryName)}</div>
           <div class="shop-now">Shop Now <i class="fa fa-arrow-right"></i></div>
         </div>
       </div>

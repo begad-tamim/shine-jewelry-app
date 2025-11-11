@@ -101,14 +101,11 @@ main,
 }
 
 .whatsapp-icon {
-  font-size: 28px;
-  line-height: 1;
-  display: inline-block;
-}
-
-/* Fallback for Font Awesome if it loads */
-.whatsapp-btn .fab.fa-whatsapp {
-  display: none;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.3s ease;
 }
 
 .whatsapp-btn:hover .whatsapp-icon {
@@ -147,7 +144,11 @@ main,
   .whatsapp-btn {
     width: 55px;
     height: 55px;
-    font-size: 24px;
+  }
+  
+  .whatsapp-icon {
+    width: 28px;
+    height: 28px;
   }
 }
 
@@ -1135,39 +1136,43 @@ body {
   }
   
   .category-card img {
-    aspect-ratio: 16/9 !important; /* Match desktop ratio - larger image */
+    aspect-ratio: 3/4 !important; /* Match product cards */
     width: 100% !important;
   }
   
-  .category-card .card-title {
-    font-size: 0.9rem !important; /* Further reduced */
-    margin-bottom: 2px !important; /* Further reduced from: 4px */
-    line-height: 1.2;
-    font-weight: 600;
-  }
-  
   .category-card .card-body {
-    padding: 4px 4px 5px !important; /* Further reduced since items are now side by side */
+    padding: 8px 8px 10px !important; /* Increased padding to match product cards */
   }
   
   .category-card .card-meta {
-    flex-direction: row !important; /* Changed to row to place items side by side */
-    justify-content: space-between !important; /* Product count left, Shop Now right */
+    display: grid !important;
+    grid-template-columns: 1fr 2fr 1fr !important; /* Three columns layout */
     align-items: center !important;
-    gap: 4px !important; /* Reduced gap for compact layout */
-    margin-top: 2px !important; /* Reduced margin */
+    gap: 6px !important;
+    margin-top: auto !important;
   }
   
   .category-card .product-count {
-    font-size: 0.7rem !important; /* Smaller font */
-    margin: 0 !important; /* Remove any margins */
+    font-size: 0.75rem !important;
+    margin: 0 !important;
+    justify-self: start !important; /* Left align */
+    grid-column: 1 !important;
+  }
+  
+  .category-card .card-title {
+    font-size: 0.9rem !important;
+    margin: 0 !important;
+    text-align: center !important;
+    justify-self: center !important; /* Center align */
+    grid-column: 2 !important;
   }
   
   .shop-now {
-    font-size: 0.7rem !important; /* Smaller font */
-    padding: 3px 6px !important; /* Smaller padding */
-    margin: 0 !important; /* Remove margins */
-    align-self: auto !important; /* Reset align-self */
+    font-size: 0.7rem !important;
+    padding: 3px 8px !important;
+    margin: 0 !important;
+    justify-self: end !important; /* Right align */
+    grid-column: 3 !important;
   }
   
   .material-badge {
@@ -1192,27 +1197,39 @@ body {
     padding: 20px 12px;
   }
   
-  .category-card .card-title {
-    font-size: 1.0rem !important; /* Slightly reduced */
-    margin-bottom: 4px !important; /* Further reduced from: 6px */
+  .category-card img {
+    aspect-ratio: 3/4 !important; /* Match product cards */
+    width: 100% !important;
   }
   
   .category-card .card-body {
-    padding: 6px 10px 8px !important; /* Further reduced from: 10px 12px 12px */
+    padding: 8px 10px 10px !important; /* Increased padding to match product cards */
   }
   
-  .category-card img {
-    aspect-ratio: 16/9 !important; /* Match desktop ratio */
-    width: 100% !important;
+  .category-card .card-meta {
+    display: grid !important;
+    grid-template-columns: 1fr 2fr 1fr !important; /* Three columns layout */
+  }
+  
+  .category-card .card-title {
+    font-size: 0.95rem !important;
+    margin: 0 !important;
+    text-align: center !important;
+    justify-self: center !important;
+    grid-column: 2 !important;
   }
   
   .category-card .product-count {
     font-size: 0.8rem !important;
+    justify-self: start !important;
+    grid-column: 1 !important;
   }
   
   .shop-now {
     font-size: 0.75rem !important;
     padding: 4px 8px !important;
+    justify-self: end !important;
+    grid-column: 3 !important;
   }
   
   .material-badge {
@@ -1302,7 +1319,7 @@ body {
 
 .category-card img {
   width: 100%;
-  aspect-ratio: 16/9; /* Increased from: 3/2 (much larger image area) */
+  aspect-ratio: 3/4; /* Changed from: 16/9 (match product cards for consistent sizing) */
   object-fit: cover;
   object-position: center center;
   transition: transform 0.4s ease;
@@ -1362,29 +1379,19 @@ body {
 }
 
 .category-card .card-body {
-  padding: 6px 12px 8px; /* Further reduced from: 10px 16px 12px */
+  padding: 10px 12px 12px; /* Increased padding to match product cards */
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   background: linear-gradient(to bottom, #ffffff 0%, #fefcf7 100%);
 }
 
-.category-card .card-title {
-  font-weight: 700;
-  font-size: 1.2rem; /* Slightly reduced font size */
-  color: #a97a2f;
-  margin-bottom: 4px; /* Further reduced from: 6px */
-  text-transform: capitalize;
-  letter-spacing: 0.5px;
-  text-align: center;
-}
-
 .category-card .card-meta {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr; /* Three columns: left (items), center (title), right (shop now) */
   align-items: center;
   margin-top: auto;
-  gap: 8px; /* Reduced spacing between items */
+  gap: 8px;
 }
 
 .category-card .product-count {
@@ -1394,6 +1401,20 @@ body {
   display: flex;
   align-items: center;
   gap: 4px; /* Reduced gap */
+  justify-self: start; /* Align to left */
+  grid-column: 1; /* Place in left column */
+}
+
+.category-card .card-title {
+  font-weight: 700;
+  font-size: 1.0rem; /* Reduced from: 1.2rem */
+  color: #a97a2f;
+  margin: 0; /* Remove margin */
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+  text-align: center; /* Center the title */
+  justify-self: center; /* Center the title in grid */
+  grid-column: 2; /* Place in middle column */
 }
 
 .category-card .product-count i {
@@ -1407,12 +1428,15 @@ body {
   font-size: 0.8rem; /* Reduced font size */
   display: flex;
   align-items: center;
-  gap: 4px; /* Reduced gap */
+  gap: 6px;
   transition: all 0.3s ease;
-  padding: 4px 10px; /* Reduced padding */
+  padding: 4px 10px;
   border-radius: 20px;
   background: rgba(169, 122, 47, 0.1);
   border: 1px solid rgba(169, 122, 47, 0.2);
+  white-space: nowrap; /* Prevent wrapping */
+  justify-self: end; /* Align to right */
+  grid-column: 3; /* Place in right column */
 }
 
 .category-card:hover .shop-now {
