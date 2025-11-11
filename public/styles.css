@@ -1154,7 +1154,7 @@ body {
   }
   
   .category-card .card-body {
-    padding: 8px 0 10px 8px !important; /* Left, top, bottom padding - NO right padding */
+    padding: 8px 12px 10px 12px !important; /* Left, top, bottom, right padding */
   }
   
   .category-card .card-meta {
@@ -1172,6 +1172,7 @@ body {
     justify-content: flex-start !important;
     white-space: nowrap !important;
     flex-shrink: 0 !important;
+    order: 1 !important;
   }
   
   .category-card .category-name {
@@ -1187,6 +1188,7 @@ body {
     flex-shrink: 1 !important;
     min-width: 0 !important;
     max-width: 60% !important;
+    order: 2 !important;
   }
   
   /* Ensure category name is NOT displayed on image */
@@ -1234,7 +1236,7 @@ body {
   }
   
   .category-card .card-body {
-    padding: 8px 0 10px 10px !important; /* Left, top, bottom padding - NO right padding */
+    padding: 8px 12px 10px 12px !important; /* Left, top, bottom, right padding */
   }
   
   .category-card .card-meta {
@@ -1243,6 +1245,7 @@ body {
     align-items: center !important;
     gap: 8px !important;
     position: relative !important;
+    width: 100% !important;
   }
   
   .category-card .product-count {
@@ -1250,6 +1253,7 @@ body {
     justify-content: flex-start !important;
     white-space: nowrap !important;
     flex-shrink: 0 !important;
+    order: 1 !important;
   }
   
   .category-card .category-name {
@@ -1265,6 +1269,7 @@ body {
     flex-shrink: 1 !important;
     min-width: 0 !important;
     max-width: 65% !important;
+    order: 2 !important;
   }
   
   /* Ensure category name is NOT displayed on image */
@@ -1434,7 +1439,7 @@ body {
 }
 
 .category-card .card-body {
-  padding: 10px 0 12px 12px; /* Left, top, bottom padding - NO right padding so category name can go to edge */
+  padding: 10px 12px 12px 12px; /* Left, top, bottom, right padding */
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -1449,6 +1454,7 @@ body {
   margin-top: auto;
   gap: 8px;
   position: relative;
+  width: 100%;
 }
 
 .category-card .product-count {
@@ -1460,6 +1466,7 @@ body {
   gap: 4px; /* Reduced gap */
   justify-content: flex-start;
   flex-shrink: 0;
+  order: 1;
 }
 
 .category-card .category-name {
@@ -1478,6 +1485,7 @@ body {
   white-space: nowrap;
   flex-shrink: 1;
   min-width: 0;
+  order: 2;
 }
 
 /* Ensure category name is NOT displayed on image - only in card-body */
