@@ -303,6 +303,7 @@ function renderCategories() {
     card.innerHTML = `
       <div class="category-image-container">
         <img src="${coverImage}" alt="${escapeHtml(categoryName)}" loading="lazy" />
+        <div class="category-title-overlay">${escapeHtml(categoryName)}</div>
         ${materialBadge}
       </div>
       <div class="card-body">
@@ -311,8 +312,6 @@ function renderCategories() {
             <i class="fa fa-gem"></i>
             ${productCount} item${productCount !== 1 ? 's' : ''}
           </div>
-          <div class="card-title">${escapeHtml(categoryName)}</div>
-          <div class="shop-now">Shop Now <i class="fa fa-arrow-right"></i></div>
         </div>
       </div>
     `;
