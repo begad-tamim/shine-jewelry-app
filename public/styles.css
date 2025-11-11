@@ -1229,27 +1229,44 @@ body {
   
   /* Product cards - tablet styles to match category cards */
   .card-body {
-    padding: 4px 7px 5px !important; /* Reduced padding for tablets */
-    gap: 2px !important;
+    padding: 4px 7px 4px !important; /* Reduced padding for tablets */
+    gap: 0px !important; /* No gap - horizontal layout */
+    flex-direction: row !important; /* Horizontal layout on tablets too */
+    justify-content: space-between !important; /* Title left, price right */
+    align-items: center !important;
   }
   .card-title {
     font-size: 0.75rem !important;
-    margin-bottom: 0px !important;
+    margin: 0 !important;
     line-height: 1.2 !important;
+    flex: 1 !important; /* Take available space */
+    text-align: left !important;
+    padding-right: 4px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
   }
   .card img {
     aspect-ratio: 16/9 !important; /* Larger image like category cards */
   }
   .card-meta {
-    margin-top: 0px !important;
-    gap: 2px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0px !important;
+    flex-shrink: 0 !important; /* Don't shrink price */
   }
   .card-meta .price {
     font-size: 0.75rem !important;
     margin: 0 !important;
+    text-align: right !important;
+    white-space: nowrap !important;
   }
   .card-meta .price-container {
     font-size: 0.75rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 0px !important;
   }
   .card-meta .old-price {
     font-size: 0.65rem !important;
@@ -1602,27 +1619,40 @@ body {
   }
   /* Product cards - reduce white space on mobile */
   .card-body {
-    padding: 4px 6px 5px !important; /* Further reduced for mobile to match category cards */
-    gap: 2px !important; /* Reduced gap between title and price */
+    padding: 4px 6px 4px !important; /* Further reduced for mobile */
+    gap: 0px !important; /* No gap - title and price will be side by side */
+    flex-direction: row !important; /* Change to horizontal layout */
+    justify-content: space-between !important; /* Title left, price right */
+    align-items: center !important; /* Vertically center align */
   }
   .card-title {
     font-size: 0.75rem !important; /* Further reduced */
-    margin-bottom: 0px !important; /* Remove margin */
+    margin: 0 !important; /* Remove all margins */
     line-height: 1.2 !important; /* Tighter line height */
+    flex: 1 !important; /* Take available space on left */
+    text-align: left !important;
+    padding-right: 4px !important; /* Small gap from price */
   }
   .card img {
     aspect-ratio: 16/9 !important; /* Match desktop - larger image like category cards */
   }
   .card-meta {
-    margin-top: 0px !important; /* Remove margin */
+    margin: 0 !important; /* Remove all margins */
     padding: 0 !important;
+    flex-shrink: 0 !important; /* Don't shrink price */
   }
   .card-meta .price {
     font-size: 0.75rem !important; /* Smaller price font */
     margin: 0 !important;
+    text-align: right !important;
+    white-space: nowrap !important; /* Prevent price from wrapping */
   }
   .card-meta .price-container {
     font-size: 0.75rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important; /* Right align price container */
+    gap: 0px !important;
   }
   .card-meta .old-price {
     font-size: 0.65rem !important;
@@ -1644,31 +1674,46 @@ body {
   
   /* Product cards - additional mobile styles for small phones */
   .card-body {
-    padding: 3px 4px 4px !important; /* Even more reduced for small phones */
-    gap: 1px !important; /* Minimal gap */
+    padding: 3px 4px 3px !important; /* Even more reduced for small phones */
+    gap: 0px !important; /* No gap - horizontal layout */
+    flex-direction: row !important; /* Horizontal layout */
+    justify-content: space-between !important; /* Title left, price right */
+    align-items: center !important; /* Vertically center */
   }
   .card-title {
     font-size: 0.7rem !important; /* Smaller font for very small screens */
-    margin-bottom: 0px !important; /* No margin */
+    margin: 0 !important; /* No margin */
     line-height: 1.15 !important; /* Very tight line height */
-    padding-bottom: 1px !important; /* Small padding instead of margin */
+    padding: 0 !important; /* No padding */
+    flex: 1 !important; /* Take available space */
+    text-align: left !important;
+    padding-right: 3px !important; /* Small gap from price */
+    overflow: hidden !important; /* Prevent overflow */
+    text-overflow: ellipsis !important; /* Show ellipsis if too long */
+    white-space: nowrap !important; /* Single line */
   }
   .card img {
     aspect-ratio: 16/9 !important; /* Match desktop - larger image like category cards */
   }
   .card-meta {
-    margin-top: 0px !important; /* No margin */
+    margin: 0 !important; /* No margin */
     padding: 0 !important;
     gap: 0px !important; /* No gap */
+    flex-shrink: 0 !important; /* Don't shrink price */
   }
   .card-meta .price {
     font-size: 0.7rem !important; /* Smaller price font for small screens */
     margin: 0 !important;
     padding: 0 !important;
+    text-align: right !important;
+    white-space: nowrap !important; /* Prevent wrapping */
   }
   .card-meta .price-container {
     font-size: 0.7rem !important;
-    gap: 2px !important; /* Minimal gap between old and new price */
+    gap: 1px !important; /* Minimal gap between old and new price */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important; /* Right align */
   }
   .card-meta .old-price {
     font-size: 0.6rem !important;
